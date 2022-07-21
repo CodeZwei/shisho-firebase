@@ -17,14 +17,15 @@
 		use:enhance={{
 			result: async ({ form }) => {
 				form.reset();
-			}
+			},
 		}}
 	>
 		<textarea
-			name="inputs"
+			name="text"
 			aria-label="Bulk add Media URLs"
 			placeholder="Add media urls (with notes in parens), separated with a new line"
 		/>
+		<button type="submit"> Submit </button>
 	</form>
 </div>
 

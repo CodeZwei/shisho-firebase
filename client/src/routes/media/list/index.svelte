@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$lib/form';
-	import type { Media } from './_sample-data';
+	import type { Media } from '../_types';
 
 	export let mediaList: Media[];
 </script>
