@@ -1,7 +1,8 @@
 import type {Media} from '../_types';
 import type {RequestHandler} from './__types';
 import {db} from '$lib/firebase';
-import {collection, doc, Timestamp, WriteBatch, writeBatch} from 'firebase/firestore';
+import type {WriteBatch} from 'firebase/firestore';
+import {collection, doc, Timestamp, writeBatch} from 'firebase/firestore';
 
 /** Predicate which returns true iff given element is truthy. */
 function nonEmptyString(element: string): boolean {
