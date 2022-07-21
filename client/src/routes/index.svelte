@@ -7,8 +7,8 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>Shisho</title>
+	<meta name="description" content="Shisho Media Manager" />
 </svelte:head>
 
 <section>
