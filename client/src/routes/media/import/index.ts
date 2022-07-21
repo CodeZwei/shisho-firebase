@@ -3,6 +3,11 @@ import type {RequestHandler} from './__types';
 import {db} from '$lib/firebase';
 import {collection, doc, Timestamp, writeBatch} from 'firebase/firestore';
 
+/** Predicate which returns true iff given element is truthy. */
+function nonEmptyString(element: string): boolean {
+  return !!element;
+}
+
 export const post: RequestHandler = async ({request}) => {
   const form = await request.formData();
 
@@ -10,7 +15,8 @@ export const post: RequestHandler = async ({request}) => {
 
   if (!text) return {status: 400};
 
-  const lines = text.toString().split('\n');
+  const lines =
+      text.toString().split('\n').map(s => s.trim()).filter(nonEmptyString);
 
   const items: Media[] = lines.map((line) => {
     const [url, ...rest] = line.split(' ');
