@@ -1,7 +1,7 @@
 import type {Media} from '../_types';
 import type {RequestHandler} from './__types';
 import {db} from '$lib/firebase';
-import {collection, doc, Timestamp, writeBatch} from 'firebase/firestore';
+import {collection, doc, Timestamp, WriteBatch, writeBatch} from 'firebase/firestore';
 
 /** Predicate which returns true iff given element is truthy. */
 function nonEmptyString(element: string): boolean {
@@ -36,18 +36,27 @@ export const post: RequestHandler = async ({request}) => {
     };
   });
 
-  // Write batch updates to Firestore
-  const batch = writeBatch(db);
-  const metadataCol = collection(db, 'media-metadata');
-  items.map((media) => {
-    batch.set(doc(metadataCol), {
-      pageUrl: media.pageUrl,
-      notes: media.notes,
-      createdAt: media.created_at,
-    });
-  });
+  const batches: WriteBatch[] = [];
 
-  return batch.commit()
+  const chunkSize = 400;  // less then the 500 max firestore batch size
+  for (let i = 0; i < items.length; i += chunkSize) {
+    const chunk = items.slice(i, i + chunkSize);
+
+    // Write batch updates to Firestore
+    const batch = writeBatch(db);
+    const metadataCol = collection(db, 'media-metadata');
+    chunk.map((media) => {
+      batch.set(doc(metadataCol), {
+        pageUrl: media.pageUrl,
+        notes: media.notes,
+        createdAt: media.created_at,
+      });
+    });
+
+    batches.push(batch);
+  }
+
+  return Promise.all(batches.map(b => b.commit()))
       .then(() => {
         return {status: 200};
       })
