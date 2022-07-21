@@ -15,8 +15,13 @@ export const post: RequestHandler = async ({request}) => {
 
   if (!text) return {status: 400};
 
-  const lines =
-      text.toString().split('\n').map(s => s.trim()).filter(nonEmptyString);
+  // A bit hacky, splits the URL from the notes and filters out empty or non-url
+  // lines
+  const lines = text.toString()
+                    .split('\n')
+                    .map(s => s.trim())
+                    .filter(nonEmptyString)
+                    .filter(s => s.startsWith('http'));
 
   const items: Media[] = lines.map((line) => {
     const [url, ...rest] = line.split(' ');
