@@ -25,8 +25,7 @@ export const post: RequestHandler = async ({request}) => {
     };
   });
 
-  // TODO: Actual request to firestore.
-  console.log(items);
+  // Write batch updates to Firestore
   const batch = writeBatch(db);
   const metadataCol = collection(db, 'media-metadata');
   items.map((media) => {

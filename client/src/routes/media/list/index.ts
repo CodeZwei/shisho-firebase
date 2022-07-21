@@ -1,27 +1,32 @@
-import {sampleMedia} from './_sample-data';
 import type {RequestHandler} from './__types';
+import {db} from '$lib/firebase';
+import {collection, deleteDoc, doc, getDocs, limit, query} from 'firebase/firestore';
+import {mediaConverter, type Media} from '../_types';
 
 export const get: RequestHandler = async () => {
-  // For now, hardcoded sample data
-  return {status: 200, body: {mediaList: sampleMedia}};
-};
+  const metadataCol =
+      collection(db, 'media-metadata').withConverter(mediaConverter);
+  const q = query(metadataCol, limit(50));
 
-// If the user has JavaScript disabled, the URL will change to
-// include the method override unless we redirect back to /media/list
-const redirect = {
-  status: 303,
-  headers: {
-    location: '/media/list',
-  }
+  const snapshot = await getDocs(q);
+  const mediaList: Media[] = [];
+  snapshot.forEach((doc) => mediaList.push(doc.data()));
+
+  return {status: 200, body: {mediaList}};
 };
 
 export const del: RequestHandler = async ({request}) => {
   const form = await request.formData();
 
-  form.get('uil');
+  const uid = form.get('uid');
 
-  // TODO Issue a delete request
-  // await api('DELETE', `todos/${locals.userid}/${form.get('uid')}`);
+  const ref = doc(db, 'media-metadata/' + uid);
 
-  return redirect;
+  return deleteDoc(ref)
+      .then(() => {
+        return {status: 200};
+      })
+      .catch((reason) => {
+        return {status: 400, body: {error: reason}};
+      });
 };

@@ -20,7 +20,7 @@
 		use:enhance={{
 			result: async ({ form }) => {
 				form.reset();
-			}
+			},
 		}}
 	>
 		<input name="text" aria-label="Add Media Page URL" placeholder="+ tap to record a page URL" />
@@ -31,10 +31,10 @@
 			<span class="text">{media.pageUrl}</span>
 
 			<form
-				action="/media?_method=DELETE"
+				action="/media/list?_method=DELETE"
 				method="post"
 				use:enhance={{
-					pending: () => (media.pending_delete = true)
+					pending: () => (media.pending_delete = true),
 				}}
 			>
 				<input type="hidden" name="uid" value={media.uid} />
