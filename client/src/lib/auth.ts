@@ -13,7 +13,7 @@ export type User = {
 };
 
 const userMapper = (claims: ParsedToken): User => ({
-  id: claims.user_id,
+  id: claims.sub,
   name: claims.name,
   email: claims.email,
   picture: claims.picture
