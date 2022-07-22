@@ -1,6 +1,7 @@
+import {browser} from '$app/env';
 import {initializeApp} from 'firebase/app';
-import {getFirestore} from 'firebase/firestore';
 import {getAuth} from 'firebase/auth';
+import {getFirestore} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBZV9vyXEFXLbaPQ8pPm-fijhwnkog74x0',
@@ -13,6 +14,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+console.log('Firebase initialized. browser=' + browser);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);

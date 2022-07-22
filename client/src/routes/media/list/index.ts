@@ -1,9 +1,11 @@
 import type {RequestHandler} from './__types';
-import {db} from '$lib/firebase';
+import {db, auth} from '$lib/firebase/client';
 import {collection, deleteDoc, doc, getDocs, limit, query} from 'firebase/firestore';
 import {mediaConverter, type Media} from '../_types';
+import {browser} from '$app/env';
 
 export const get: RequestHandler = async () => {
+  console.log('media/list GET running browser=' + browser);
   const metadataCol =
       collection(db, 'media-metadata').withConverter(mediaConverter);
   const q = query(metadataCol, limit(50));
