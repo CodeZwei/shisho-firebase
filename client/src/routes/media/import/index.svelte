@@ -1,5 +1,34 @@
 <script lang="ts">
+	import { auth } from '$lib/firebase/client';
 	import { enhance } from '$lib/form';
+	import type { Load } from '.svelte-kit/types/src/routes/media/import/__types';
+	import { onMount } from 'svelte';
+
+	let count = 0;
+
+	onMount(async () => {
+		const authToken = await auth.currentUser?.getIdToken();
+
+		const headers: HeadersInit = { 'Content-Type': 'application/json' };
+
+		if (authToken) {
+			headers['firebase-auth-token'] = authToken;
+		}
+
+		try {
+			const response = await fetch('/media/import/count', {
+				method: 'GET',
+				headers,
+			});
+			console.log(response);
+			const body = await response.json();
+			console.log(body);
+
+			count = body.count;
+		} catch (error) {
+			console.error(`Error in load function for /: ${error}`);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -9,6 +38,8 @@
 
 <div class="bulk-import">
 	<h1>Media Bulk Import</h1>
+
+	<h3>Count: {count}</h3>
 
 	<form
 		class="import"

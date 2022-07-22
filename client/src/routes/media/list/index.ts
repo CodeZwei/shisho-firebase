@@ -1,5 +1,5 @@
 import type {RequestHandler} from './__types';
-import {db, auth} from '$lib/firebase/client';
+import {db} from '$lib/firebase/client';
 import {collection, deleteDoc, doc, getDocs, limit, query} from 'firebase/firestore';
 import {mediaConverter, type Media} from '../_types';
 import {browser} from '$app/env';

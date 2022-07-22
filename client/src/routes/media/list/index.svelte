@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { auth } from '$lib/firebase/client';
+
 	import { enhance } from '$lib/form';
 	import type { Media } from '../_types';
 
