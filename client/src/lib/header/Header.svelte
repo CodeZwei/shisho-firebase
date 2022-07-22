@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import logo from './svelte-logo.svg';
+	import Auth from '$lib/Auth.svelte';
 </script>
 
 <header>
@@ -38,6 +39,7 @@
 
 	<div class="corner">
 		<!-- TODO put something else here? github link? -->
+		<Auth></Auth>
 	</div>
 </header>
 
