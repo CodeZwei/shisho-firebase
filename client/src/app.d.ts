@@ -6,6 +6,10 @@
 declare namespace App {
   interface Locals {
     userid: string;
+    auth?: {
+      uid: string;
+      // Add more claims
+    }
   }
 
   // interface Platform {}

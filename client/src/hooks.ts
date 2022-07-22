@@ -1,7 +1,10 @@
+import {auth} from '$lib/firebase/server';
 import type {Handle} from '@sveltejs/kit';
+import {sequence} from '@sveltejs/kit/hooks';
 import * as cookie from 'cookie';
 
-export const handle: Handle = async ({event, resolve}) => {
+/** Built by default by svelte kit to power TODOs app. Can remove eventually. */
+const setUserIdCookie: Handle = async ({event, resolve}) => {
   const cookies = cookie.parse(event.request.headers.get('cookie') || '');
   event.locals.userid = cookies['userid'] || crypto.randomUUID();
 
@@ -21,3 +24,23 @@ export const handle: Handle = async ({event, resolve}) => {
 
   return response;
 };
+
+/** Sends our current firebase authentication JWT to backend on every request */
+const validateFirebaseAuthJWT: Handle = async ({event, resolve}) => {
+  const token = event.request.headers.get('firebase-auth-token');
+  // const cookies = cookie.parse(event.request.headers.get('cookie') || '');
+  // const token = cookies['firebase-auth-token'];
+
+  if (token) {
+    const decodedToken = await auth.verifyIdToken(token);
+    const uid = decodedToken.uid;
+
+    event.locals.auth = {uid};
+  }
+
+  const response = await resolve(event);
+
+  return response;
+};
+
+export const handle = sequence(setUserIdCookie, validateFirebaseAuthJWT);
