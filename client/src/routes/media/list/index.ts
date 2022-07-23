@@ -1,18 +1,18 @@
 import type {RequestHandler} from './__types';
-import {db} from '$lib/firebase/client';
-import {collection, deleteDoc, doc, getDocs, limit, query} from 'firebase/firestore';
-import {mediaConverter, type Media} from '../_types';
+import {db} from '$lib/firebase/server';
+import type {Media} from '../_types';
 import {browser} from '$app/env';
 
-export const get: RequestHandler = async () => {
-  console.log('media/list GET running browser=' + browser);
-  const metadataCol =
-      collection(db, 'media-metadata').withConverter(mediaConverter);
-  const q = query(metadataCol, limit(50));
+export const get: RequestHandler = async ({locals}) => {
+  // TODO: Implement permissions using locals.
 
-  const snapshot = await getDocs(q);
+  console.log('media/list GET running browser=' + browser);
+  const metadataCol = db.collection('media-metadata').limit(50);
+  const q = metadataCol.get();
+
+  const snapshot = await q;
   const mediaList: Media[] = [];
-  snapshot.forEach((doc) => mediaList.push(doc.data()));
+  snapshot.forEach((doc) => mediaList.push(doc.data() as Media));
 
   return {status: 200, body: {mediaList}};
 };
@@ -22,9 +22,9 @@ export const del: RequestHandler = async ({request}) => {
 
   const uid = form.get('uid');
 
-  const ref = doc(db, 'media-metadata/' + uid);
+  const ref = db.doc('media-metadata/' + uid);
 
-  return deleteDoc(ref)
+  return ref.delete()
       .then(() => {
         return {status: 200};
       })

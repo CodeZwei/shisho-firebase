@@ -2,7 +2,8 @@ import type {DocumentData, FirestoreDataConverter, QueryDocumentSnapshot, Timest
 
 /** Type definition for Media Metadata */
 export type Media = {
-  uid: string;  //
+  id: string;
+  // uid: string;  //
   created_at: Timestamp;
   pageUrl: string;
   notes: string;  //
@@ -21,7 +22,8 @@ export const mediaConverter: FirestoreDataConverter<Media> = {
   fromFirestore(snapshot: QueryDocumentSnapshot, options): Media {
     const data = snapshot.data(options);
     return {
-      uid: snapshot.id,
+      id: snapshot.id,
+      // uid: snapshot.id,
       pageUrl: data.pageUrl,
       notes: data.notes,
       created_at: data.createdAt,
