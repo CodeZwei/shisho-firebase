@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { auth } from '$lib/firebase/client';
 	import { enhance } from '$lib/form';
-	import type { Load } from '.svelte-kit/types/src/routes/media/import/__types';
 	import { onMount } from 'svelte';
 
 	let count = 0;

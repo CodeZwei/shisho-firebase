@@ -1,6 +1,6 @@
 import {auth} from '$lib/firebase/client';
 import {readable} from 'svelte/store';
-import type {ParsedToken} from 'firebase/auth';
+import type {ParsedToken, UserCredential} from 'firebase/auth';
 import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect} from 'firebase/auth';
 import {browser} from '$app/env';
 
@@ -22,20 +22,39 @@ const userMapper = (claims: ParsedToken): User => ({
 // construction function. need to call it after we
 // initialize our firebase app
 export const initAuth = (useRedirect = false) => {
-  const loginWithEmailPassword = (email: string, password: string) =>
-      signInWithEmailAndPassword(auth, email, password);
+  async function performSessionLogin(token: string) {
+    await fetch('http://localhost:3000/session/login', {
+      headers: {accept: 'application/json'},
+      method: 'post',
+      body: JSON.stringify({idToken: token})
+    });
+    return;
+  }
 
-  const loginWithGoogle = () => {
+  const loginWithEmailPassword =
+      async (email: string, password: string) => {
+    const creds = await signInWithEmailAndPassword(auth, email, password);
+    const token = await creds.user.getIdToken();
+    return await performSessionLogin(token);
+  }
+
+  const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
 
     if (useRedirect) {
+      // TODO: Hook this into setting a session
       return signInWithRedirect(auth, provider);
     } else {
-      return signInWithPopup(auth, provider);
+      const creds = await signInWithPopup(auth, provider);
+      const token = await creds.user.getIdToken();
+      return await performSessionLogin(token);
     }
   };
 
-  const logout = () => auth.signOut();
+  const logout = async () => {
+    await auth.signOut();
+    await fetch('http://localhost:3000/session/logout', {method: 'post'});
+  };
 
   // wrap Firebase user in a Svelte readable store
   const user = readable<User|null>(null, set => {

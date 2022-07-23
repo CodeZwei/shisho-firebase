@@ -1,5 +1,5 @@
 import {auth} from '$lib/firebase/server';
-import type {Handle} from '@sveltejs/kit';
+import type {GetSession, Handle} from '@sveltejs/kit';
 import {sequence} from '@sveltejs/kit/hooks';
 import * as cookie from 'cookie';
 
@@ -44,3 +44,12 @@ const validateFirebaseAuthJWT: Handle = async ({event, resolve}) => {
 };
 
 export const handle = sequence(setUserIdCookie, validateFirebaseAuthJWT);
+
+/** Sets the Svelte Session based on the locals set by verifying the token. */
+export const getSession: GetSession = (event) => {
+  if (!event.locals.auth) {
+    return {};
+  }
+
+  return {...event.locals.auth};
+};
