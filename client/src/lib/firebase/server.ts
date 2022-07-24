@@ -1,24 +1,23 @@
-import * as fbAdmin from 'firebase-admin';
-const {initializeApp, credential} = fbAdmin;
+import * as admin from 'firebase-admin';
 
 // Initializes Firebase admin
 // https://dev.to/vvo/how-to-add-firebase-service-account-json-files-to-vercel-ph5
 
-let admin: fbAdmin.app.App;
+let app: admin.app.App;
 
 if (process.env.FIREBASE_ADMIN_CREDENTIALS) {
     // Credentials loaded through Environment Variable
     const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS as string);
 
-    admin = initializeApp({
-        credential: credential.cert(serviceAccount),
+    app = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
     });
 } else {
     // Credentials loaded from file saved in GOOGLE_APPLICATION_CREDENTIALS
-    admin = initializeApp();
+    app = admin.initializeApp();
 }
 
-const db = admin.firestore();
-const auth = admin.auth();
+const db = app.firestore();
+const auth = app.auth();
 
-export {admin, auth, db};
+export {app as admin, auth, db};
