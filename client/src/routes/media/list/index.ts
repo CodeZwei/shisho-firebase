@@ -4,7 +4,10 @@ import {mediaConverter, type Media} from '../_types';
 import {browser} from '$app/env';
 
 export const get: RequestHandler = async ({locals}) => {
-  // TODO: Implement permissions using locals.
+  const uid = locals.auth?.uid;
+  console.log('Request has uid: ' + uid);
+
+  if (!uid) return {status: 403};
 
   console.log('media/list GET running browser=' + browser);
   const metadataCol = db.collection('media-metadata').limit(50).withConverter(mediaConverter);
