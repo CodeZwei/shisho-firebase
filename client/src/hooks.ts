@@ -27,12 +27,12 @@ const setUserIdCookie: Handle = async ({event, resolve}) => {
 
 /** Sends our current firebase authentication JWT to backend on every request */
 const validateFirebaseAuthJWT: Handle = async ({event, resolve}) => {
-  const token = event.request.headers.get('firebase-auth-token');
-  // const cookies = cookie.parse(event.request.headers.get('cookie') || '');
-  // const token = cookies['firebase-auth-token'];
+  // const token = event.request.headers.get('firebase-session-token');
+  const cookies = cookie.parse(event.request.headers.get('cookie') || '');
+  const token = cookies['firebase-session-token'];
 
   if (token) {
-    const decodedToken = await auth.verifyIdToken(token);
+    const decodedToken = await auth.verifySessionCookie(token);
     const uid = decodedToken.uid;
 
     event.locals.auth = {uid};

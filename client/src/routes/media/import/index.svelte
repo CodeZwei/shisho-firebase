@@ -1,18 +1,11 @@
 <script lang="ts">
-	import { auth } from '$lib/firebase/client';
 	import { enhance } from '$lib/form';
 	import { onMount } from 'svelte';
 
 	let count = 0;
 
 	onMount(async () => {
-		const authToken = await auth.currentUser?.getIdToken();
-
 		const headers: HeadersInit = { 'Content-Type': 'application/json' };
-
-		if (authToken) {
-			headers['firebase-auth-token'] = authToken;
-		}
 
 		try {
 			const response = await fetch('/media/import/count', {

@@ -22,11 +22,17 @@ export const post: RequestHandler = async ({request}) => {
   const sessionCookie = await auth.createSessionCookie(idToken, {expiresIn})
 
   // Set cookie policy for session cookie.
-  const options = {maxAge: expiresIn, httpOnly: true, secure: true};
+  const options: cookie.CookieSerializeOptions = {
+    path: '/',
+    maxAge: expiresIn,
+    httpOnly: true,
+    secure: true
+  };
+
   return {
     headers: {
       'set-cookie': [
-        cookie.serialize('firebase-auth-token', sessionCookie, options),
+        cookie.serialize('firebase-session-token', sessionCookie, options),
       ]
     },
     status: 200,
