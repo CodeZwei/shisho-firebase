@@ -1,19 +1,18 @@
 import type {RequestHandler} from './__types';
 import {db} from '$lib/firebase/server';
-import type {Media} from '../_types';
+import {mediaConverter, type Media} from '../_types';
 import {browser} from '$app/env';
-import { doc, type FirestoreDataConverter } from 'firebase/firestore';
 
 export const get: RequestHandler = async ({locals}) => {
   // TODO: Implement permissions using locals.
 
   console.log('media/list GET running browser=' + browser);
-  const metadataCol = db.collection('media-metadata').limit(50);
+  const metadataCol = db.collection('media-metadata').limit(50).withConverter(mediaConverter);
   const q = metadataCol.get();
 
   const snapshot = await q;
   const mediaList: Media[] = [];
-  snapshot.forEach((doc) => mediaList.push({id: doc.id, ...doc.data()} as Media));
+  snapshot.forEach((doc) => mediaList.push(doc.data()));
 
   return {status: 200, body: {mediaList}};
 };
