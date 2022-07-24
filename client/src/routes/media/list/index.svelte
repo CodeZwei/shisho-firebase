@@ -26,7 +26,7 @@
 		<input name="text" aria-label="Add Media Page URL" placeholder="+ tap to record a page URL" />
 	</form>
 
-	{#each mediaList as media (media.uid)}
+	{#each mediaList as media (media.id)}
 		<div class="media">
 			<span class="text">{media.pageUrl}</span>
 
@@ -37,7 +37,7 @@
 					pending: () => (media.pending_delete = true),
 				}}
 			>
-				<input type="hidden" name="uid" value={media.uid} />
+				<input type="hidden" name="uid" value={media.id} />
 				<button class="delete" aria-label="Delete todo" disabled={media.pending_delete} />
 			</form>
 		</div>

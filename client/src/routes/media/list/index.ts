@@ -1,14 +1,19 @@
 import type {RequestHandler} from './__types';
-import {db} from '$lib/firebase';
-import {collection, deleteDoc, doc, getDocs, limit, query} from 'firebase/firestore';
+import {db} from '$lib/firebase/server';
 import {mediaConverter, type Media} from '../_types';
+import {browser} from '$app/env';
 
-export const get: RequestHandler = async () => {
-  const metadataCol =
-      collection(db, 'media-metadata').withConverter(mediaConverter);
-  const q = query(metadataCol, limit(50));
+export const get: RequestHandler = async ({locals}) => {
+  const uid = locals.auth?.uid;
+  console.log('Request has uid: ' + uid);
 
-  const snapshot = await getDocs(q);
+  if (!uid) return {status: 403};
+
+  console.log('media/list GET running browser=' + browser);
+  const metadataCol = db.collection('media-metadata').limit(50).withConverter(mediaConverter);
+  const q = metadataCol.get();
+
+  const snapshot = await q;
   const mediaList: Media[] = [];
   snapshot.forEach((doc) => mediaList.push(doc.data()));
 
@@ -20,9 +25,9 @@ export const del: RequestHandler = async ({request}) => {
 
   const uid = form.get('uid');
 
-  const ref = doc(db, 'media-metadata/' + uid);
+  const ref = db.doc('media-metadata/' + uid);
 
-  return deleteDoc(ref)
+  return ref.delete()
       .then(() => {
         return {status: 200};
       })

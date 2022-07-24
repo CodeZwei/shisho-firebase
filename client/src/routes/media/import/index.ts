@@ -1,6 +1,6 @@
 import type {Media} from '../_types';
 import type {RequestHandler} from './__types';
-import {db} from '$lib/firebase';
+import {db} from '$lib/firebase/client';
 import type {WriteBatch} from 'firebase/firestore';
 import {collection, doc, Timestamp, writeBatch} from 'firebase/firestore';
 

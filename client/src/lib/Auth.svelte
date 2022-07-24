@@ -1,6 +1,7 @@
 <script lang="ts">
     import { initAuth } from './auth';
   
+    // TODO: Update firebase auth module with auth from cookie on startup
     const { loginWithGoogle, logout, user } = initAuth();
   </script>
   

@@ -1,6 +1,7 @@
+import {browser} from '$app/env';
 import {initializeApp} from 'firebase/app';
+import {getAuth, inMemoryPersistence} from 'firebase/auth';
 import {getFirestore} from 'firebase/firestore';
-import {getAuth} from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBZV9vyXEFXLbaPQ8pPm-fijhwnkog74x0',
@@ -13,8 +14,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+console.log('Firebase initialized. browser=' + browser);
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+auth.setPersistence(inMemoryPersistence);
 const db = getFirestore(app);
 
 export {app, auth, db};
