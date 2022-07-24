@@ -23,7 +23,7 @@ export const get: RequestHandler = async ({locals}) => {
   }
 
   const count =
-      await db.collection('media-metadata').get().then(snap => snap.size);
+      await db.collection('media-metadata').limit(1).get().then(snap => snap.size);
 
   return {status: 200, body: JSON.stringify({count})};
 };
