@@ -1,6 +1,6 @@
 import {auth} from '$lib/firebase/client';
 import {readable} from 'svelte/store';
-import type {ParsedToken, UserCredential} from 'firebase/auth';
+import type {ParsedToken} from 'firebase/auth';
 import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect} from 'firebase/auth';
 import {browser} from '$app/env';
 
@@ -23,7 +23,7 @@ const userMapper = (claims: ParsedToken): User => ({
 // initialize our firebase app
 export const initAuth = (useRedirect = false) => {
   async function performSessionLogin(token: string) {
-    await fetch('http://localhost:3000/session/login', {
+    await fetch(`${window.location.origin}/session/login`, {
       headers: {accept: 'application/json'},
       method: 'post',
       body: JSON.stringify({idToken: token})
@@ -53,7 +53,7 @@ export const initAuth = (useRedirect = false) => {
 
   const logout = async () => {
     await auth.signOut();
-    await fetch('http://localhost:3000/session/logout', {method: 'post'});
+    await fetch(`${window.location.origin}/session/logout`, {method: 'post'});
   };
 
   // wrap Firebase user in a Svelte readable store
