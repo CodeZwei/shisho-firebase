@@ -9,7 +9,11 @@ function nonEmptyString(element: string): boolean {
   return !!element;
 }
 
-export const post: RequestHandler = async ({request}) => {
+export const post: RequestHandler = async ({locals, request}) => {
+  // Only logged in users can upload
+  const uid = locals.auth?.uid;
+  if (!uid) return {status: 403};
+
   const form = await request.formData();
 
   const text = form.get('text');
