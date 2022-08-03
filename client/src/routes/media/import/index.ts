@@ -1,8 +1,8 @@
 import type {Media} from '../_types';
 import type {RequestHandler} from './__types';
-import {db} from '$lib/firebase/client';
-import type {WriteBatch} from 'firebase/firestore';
-import {collection, doc, Timestamp, writeBatch} from 'firebase/firestore';
+import {db} from '$lib/firebase/server';
+import type {WriteBatch} from 'firebase-admin/firestore';
+import {Timestamp} from 'firebase-admin/firestore';
 
 /** Predicate which returns true iff given element is truthy. */
 function nonEmptyString(element: string): boolean {
@@ -29,10 +29,10 @@ export const post: RequestHandler = async ({request}) => {
     const notes = rest.join(' ');
 
     return {
-      uid: '',
+      id: '',
       pageUrl: url.trim(),
       notes,
-      created_at: Timestamp.now(),
+      created_at: Timestamp.now().toMillis(),
       pending_delete: false,
     };
   });
@@ -44,10 +44,10 @@ export const post: RequestHandler = async ({request}) => {
     const chunk = items.slice(i, i + chunkSize);
 
     // Write batch updates to Firestore
-    const batch = writeBatch(db);
-    const metadataCol = collection(db, 'media-metadata');
+    const batch = db.batch();
+    const metadataCol = db.collection('media-metadata');
     chunk.map((media) => {
-      batch.set(doc(metadataCol), {
+      batch.set(metadataCol.doc(), {
         pageUrl: media.pageUrl,
         notes: media.notes,
         createdAt: media.created_at,
