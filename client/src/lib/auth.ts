@@ -2,7 +2,7 @@ import {auth} from '$lib/firebase/client';
 import {readable} from 'svelte/store';
 import type {ParsedToken} from 'firebase/auth';
 import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect} from 'firebase/auth';
-import {browser} from '$app/env';
+import {browser} from '$app/environment';
 
 // Adapted from https://codechips.me/firebase-authentication-with-svelte/
 

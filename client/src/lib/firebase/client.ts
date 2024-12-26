@@ -1,4 +1,4 @@
-import {browser} from '$app/env';
+import {browser} from '$app/environment';
 import {initializeApp} from 'firebase/app';
 import {getAuth, inMemoryPersistence} from 'firebase/auth';
 import {getFirestore} from 'firebase/firestore';

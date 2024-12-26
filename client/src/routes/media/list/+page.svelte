@@ -38,7 +38,7 @@
 				}}
 			>
 				<input type="hidden" name="uid" value={media.id} />
-				<button class="delete" aria-label="Delete todo" disabled={media.pending_delete} />
+				<button class="delete" aria-label="Delete todo" disabled={media.pending_delete}></button>
 			</form>
 		</div>
 	{/each}

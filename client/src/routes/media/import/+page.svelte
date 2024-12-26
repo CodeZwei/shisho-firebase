@@ -47,7 +47,7 @@
 			name="text"
 			aria-label="Bulk add Media URLs"
 			placeholder="Add media urls (with notes in parens), separated with a new line"
-		/>
+		></textarea>
 		<button type="submit"> Submit </button>
 	</form>
 </div>

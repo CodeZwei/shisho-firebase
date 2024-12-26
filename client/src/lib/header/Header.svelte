@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import logo from './svelte-logo.svg';
-	import Auth from '$lib/Auth.svelte';
+	// import Auth from '$lib/Auth.svelte';
 </script>
 
 <header>
@@ -17,19 +17,19 @@
 		</svg>
 		<ul>
 			<li class:active={$page.url.pathname === '/'}>
-				<a sveltekit:prefetch href="/">Home</a>
+				<a href="/">Home</a>
 			</li>
 			<li class:active={$page.url.pathname === '/about'}>
-				<a sveltekit:prefetch href="/about">About</a>
+				<a href="/about">About</a>
 			</li>
 			<li class:active={$page.url.pathname === '/todos'}>
-				<a sveltekit:prefetch href="/todos">Todos</a>
+				<a href="/todos">Todos</a>
 			</li>
 			<li class:active={$page.url.pathname === '/media/list'}>
-				<a sveltekit:prefetch href="/media/list">List</a>
+				<a href="/media/list">List</a>
 			</li>
 			<li class:active={$page.url.pathname === '/media/import'}>
-				<a sveltekit:prefetch href="/media/import">Import</a>
+				<a href="/media/import">Import</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
@@ -39,7 +39,7 @@
 
 	<div class="corner">
 		<!-- TODO put something else here? github link? -->
-		<Auth></Auth>
+		<!-- <Auth></Auth> -->
 	</div>
 </header>
 
