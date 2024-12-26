@@ -24,7 +24,7 @@
 
 	<form
 		class="new"
-		action="/todos"
+		action="/todos?/post"
 		method="post"
 		use:enhance={{
 			result: async ({ form }) => {
@@ -43,7 +43,7 @@
 			animate:flip={{ duration: 200 }}
 		>
 			<form
-				action="/todos?_method=PATCH"
+				action="/todos?/patch"
 				method="post"
 				use:enhance={{
 					pending: ({ data }) => {
@@ -63,7 +63,7 @@
 			</form>
 
 			<form
-				action="/todos?_method=DELETE"
+				action="/todos?/delete"
 				method="post"
 				use:enhance={{
 					pending: () => (todo.pending_delete = true)

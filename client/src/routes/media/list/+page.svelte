@@ -15,7 +15,7 @@
 
 	<form
 		class="new"
-		action="/media"
+		action="/media?/post"
 		method="post"
 		use:enhance={{
 			result: async ({ form }) => {
@@ -31,7 +31,7 @@
 			<span class="text">{media.pageUrl}</span>
 
 			<form
-				action="/media/list?_method=DELETE"
+				action="/media/list?/delete"
 				method="post"
 				use:enhance={{
 					pending: () => (media.pending_delete = true),
