@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import type { PageData } from './$types';
 	import type { Media } from '../_types';
 
 	let { data }: { data: PageData } = $props();
-	const initialList = data.mediaList;
-	let mediaList: Media[] = $state(initialList);
+	let mediaList: Media[] = $state(untrack(() => data.mediaList));
 
 	async function addMedia(e: SubmitEvent) {
 		e.preventDefault();

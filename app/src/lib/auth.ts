@@ -13,10 +13,10 @@ export type User = {
 };
 
 const userMapper = (claims: ParsedToken): User => ({
-  id: claims.sub,
-  name: claims.name,
-  email: claims.email,
-  picture: claims.picture
+  id: claims['sub'] as string | object | undefined,
+  name: claims['name'] as string | object | undefined,
+  email: claims['email'] as string | object | undefined,
+  picture: claims['picture'] as string | object | undefined
 });
 
 // construction function. need to call it after we
