@@ -89,7 +89,6 @@ FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 ## Known Issues
 
 - Backend API routes do not exist. Form actions in `media/import` and `media/list` are placeholders that will be replaced by `+server.ts` API routes.
-- `firebase` package is on v9; latest is v11.
 
 ## Code Conventions
 
