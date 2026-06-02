@@ -1,38 +1,19 @@
-import {db} from '$lib/firebase/server';
-import {mediaConverter, type Media} from '../_types';
-import {browser} from '$app/environment';
+import { db } from '$lib/firebase/server';
+import { mediaConverter } from '../_types';
+import { error } from '@sveltejs/kit';
+import type { Media } from 'shared';
 
-export async function load({locals}) {
-  const uid = locals.auth?.uid;
-  console.log('Request has uid: ' + uid);
+export async function load({ locals }) {
+  if (!locals.auth?.uid) throw error(401, 'Unauthorized');
 
-  if (!uid) return {status: 403};
+  const snapshot = await db
+    .collection('media-metadata')
+    .limit(50)
+    .withConverter(mediaConverter)
+    .get();
 
-  console.log('media/list GET running browser=' + browser);
-  const metadataCol = db.collection('media-metadata').limit(50).withConverter(mediaConverter);
-  const q = metadataCol.get();
-
-  const snapshot = await q;
   const mediaList: Media[] = [];
   snapshot.forEach((doc) => mediaList.push(doc.data()));
 
-  return {mediaList};
-};
-
-export const actions = {
-  delete: async ({request}) => {
-      const form = await request.formData();
-    
-      const uid = form.get('uid');
-    
-      const ref = db.doc('media-metadata/' + uid);
-    
-      return ref.delete()
-          .then(() => {
-            return {status: 200};
-          })
-          .catch((reason) => {
-            return {status: 400, body: {error: reason}};
-          });
-    },
-};
+  return { mediaList };
+}

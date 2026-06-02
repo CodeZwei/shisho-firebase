@@ -1,8 +1,42 @@
 <script lang="ts">
-	import { enhance } from '$lib/form';
+	import type { PageData } from './$types';
 	import type { Media } from '../_types';
 
-	export let mediaList: Media[];
+	let { data }: { data: PageData } = $props();
+	const initialList = data.mediaList;
+	let mediaList: Media[] = $state(initialList);
+
+	async function addMedia(e: SubmitEvent) {
+		e.preventDefault();
+		const form = e.currentTarget as HTMLFormElement;
+		const input = form.elements.namedItem('text') as HTMLInputElement;
+		const pageUrl = input.value.trim();
+		if (!pageUrl) return;
+
+		const res = await fetch('/api/media', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ items: [{ pageUrl }] }),
+		});
+		if (res.ok) {
+			form.reset();
+			const listRes = await fetch('/api/media');
+			if (listRes.ok) mediaList = await listRes.json();
+		}
+	}
+
+	async function deleteMedia(id: string) {
+		const item = mediaList.find((m) => m.id === id);
+		if (!item) return;
+		item.pending_delete = true;
+
+		const res = await fetch(`/api/media/${id}`, { method: 'DELETE' });
+		if (res.ok) {
+			mediaList = mediaList.filter((m) => m.id !== id);
+		} else {
+			item.pending_delete = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -13,33 +47,19 @@
 <div class="media-list">
 	<h1>Media List</h1>
 
-	<form
-		class="new"
-		action="/media?/post"
-		method="post"
-		use:enhance={{
-			result: async ({ form }) => {
-				form.reset();
-			},
-		}}
-	>
+	<form class="new" onsubmit={addMedia}>
 		<input name="text" aria-label="Add Media Page URL" placeholder="+ tap to record a page URL" />
 	</form>
 
 	{#each mediaList as media (media.id)}
 		<div class="media">
 			<span class="text">{media.pageUrl}</span>
-
-			<form
-				action="/media/list?/delete"
-				method="post"
-				use:enhance={{
-					pending: () => (media.pending_delete = true),
-				}}
-			>
-				<input type="hidden" name="uid" value={media.id} />
-				<button class="delete" aria-label="Delete todo" disabled={media.pending_delete}></button>
-			</form>
+			<button
+				class="delete"
+				aria-label="Delete media"
+				disabled={media.pending_delete}
+				onclick={() => deleteMedia(media.id)}
+			></button>
 		</div>
 	{/each}
 </div>
@@ -93,7 +113,6 @@
 		background-color: white;
 		border-radius: 8px;
 		filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.1));
-		/* transform: translate(-1px, -1px); */
 		transition: filter 0.2s, transform 0.2s;
 	}
 

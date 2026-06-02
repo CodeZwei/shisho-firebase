@@ -86,10 +86,6 @@ PUBLIC_FIREBASE_APP_ID=
 FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 ```
 
-## Known Issues
-
-- Backend API routes do not exist. Form actions in `media/import` and `media/list` are placeholders that will be replaced by `+server.ts` API routes.
-
 ## Code Conventions
 
 - Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`) — no legacy `writable` stores or `onMount` where a rune works.
@@ -101,7 +97,6 @@ FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 
 ## Not Built Yet
 
-- REST API routes (`app/src/routes/api/*`)
 - CLI (`cli/`)
 - Chrome extension (`extension/`)
 - Tags implementation on the frontend

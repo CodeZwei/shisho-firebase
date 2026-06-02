@@ -1,26 +1,31 @@
 <script lang="ts">
-	import { enhance } from '$lib/form';
-	import { onMount } from 'svelte';
+	let text = $state('');
+	let submitting = $state(false);
 
-	let count = 0;
+	async function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		submitting = true;
 
-	onMount(async () => {
-		const headers: HeadersInit = { 'Content-Type': 'application/json' };
-
-		try {
-			const response = await fetch('/media/import/count', {
-				method: 'GET',
-				headers,
+		const items = text
+			.split('\n')
+			.map((s) => s.trim())
+			.filter((s) => s.startsWith('http'))
+			.map((line) => {
+				const [pageUrl, ...rest] = line.split(' ');
+				return { pageUrl, notes: rest.join(' ') };
 			});
-			console.log(response);
-			const body = await response.json();
-			console.log(body);
 
-			count = body.count;
-		} catch (error) {
-			console.error(`Error in load function for /: ${error}`);
+		if (items.length > 0) {
+			await fetch('/api/media', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ items }),
+			});
+			text = '';
 		}
-	});
+
+		submitting = false;
+	}
 </script>
 
 <svelte:head>
@@ -31,24 +36,13 @@
 <div class="bulk-import">
 	<h1>Media Bulk Import</h1>
 
-	<h3>Count: {count}</h3>
-
-	<form
-		class="import"
-		action="/media/import"
-		method="post"
-		use:enhance={{
-			result: async ({ form }) => {
-				form.reset();
-			},
-		}}
-	>
+	<form class="import" onsubmit={handleSubmit}>
 		<textarea
-			name="text"
+			bind:value={text}
 			aria-label="Bulk add Media URLs"
-			placeholder="Add media urls (with notes in parens), separated with a new line"
+			placeholder="Add media urls (with notes after a space), separated by a new line"
 		></textarea>
-		<button type="submit"> Submit </button>
+		<button type="submit" disabled={submitting}>Submit</button>
 	</form>
 </div>
 
