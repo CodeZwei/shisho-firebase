@@ -6,20 +6,21 @@ Personal media metadata manager for tracking links to and metadata about images 
 
 ```
 ┌─────────────────┐   ┌──────────────────┐   ┌──────────────────┐
-│  SvelteKit App  │   │   CLI (Node.js)  │   │ Chrome Extension │
-│  /app           │   │  /cli            │   │  /extension      │
+│  Browser        │   │   CLI (Node.js)  │   │ Chrome Extension │
+│  (session       │   │  /cli            │   │  /extension      │
+│   cookie)       │   │  (Bearer token)  │   │  (Bearer token)  │
 └────────┬────────┘   └────────┬─────────┘   └────────┬─────────┘
          │                     │                       │
          └─────────────────────┼───────────────────────┘
-                               │ HTTP REST + Bearer token
+                               │ HTTPS
                       ┌────────▼────────┐
-                      │  Backend API    │
-                      │  /backend       │
-                      │  (Firebase      │
-                      │   Functions or  │
-                      │   Node/Express) │
+                      │  SvelteKit app  │
+                      │  /app (Vercel)  │
+                      │                 │
+                      │  UI: routes/*   │
+                      │  API: api/*     │
                       └────────┬────────┘
-                               │
+                               │ firebase-admin SDK
              ┌─────────────────┼──────────────────┐
              │                 │                  │
     ┌────────▼──────┐ ┌───────▼──────┐ ┌────────▼──────┐
@@ -28,7 +29,7 @@ Personal media metadata manager for tracking links to and metadata about images 
     └───────────────┘ └──────────────┘ └───────────────┘
 ```
 
-The backend API is the single source of truth for all data access. The SvelteKit app, CLI, and Chrome extension all call it — no client touches Firebase directly.
+The SvelteKit app serves the browser UI and hosts the REST API at `/api/*`. The CLI and Chrome extension call those same endpoints with a Bearer token. No client touches Firebase directly — all data access goes through the SvelteKit server using the Admin SDK.
 
 ## Repo Structure
 
@@ -39,8 +40,7 @@ npm workspaces monorepo. Single `node_modules` and base `tsconfig.json` at the r
 ├── package.json       # root — defines workspaces
 ├── tsconfig.json      # base TS config; each package extends this
 ├── node_modules/
-├── app/               # SvelteKit webapp (Vercel)
-├── backend/           # REST API (Firebase Functions or Node/Express)
+├── app/               # SvelteKit webapp + REST API (Vercel)
 ├── cli/               # Node.js CLI
 ├── extension/         # Chrome extension (optional)
 └── shared/            # shared TypeScript types and helpers
@@ -53,9 +53,8 @@ Each package has its own `package.json` and extends the root `tsconfig.json`. Th
 
 ## Tech Stack
 
-- **Frontend** (`app/`): SvelteKit 2 / Svelte 5 (runes syntax), TypeScript, deployed on Vercel
-- **Backend** (`backend/`): Firebase Functions (preferred) or standalone Node/Express — not yet built
-- **CLI** (`cli/`): Node.js / TypeScript, calls backend REST API with a long-lived token
+- **App** (`app/`): SvelteKit 2 / Svelte 5 (runes syntax), TypeScript, deployed on Vercel. Serves the browser UI and the REST API at `/api/*`.
+- **CLI** (`cli/`): Node.js / TypeScript, calls `/api/*` endpoints with a Firebase Bearer token
 - **Shared** (`shared/`): TypeScript types and pure helpers, no runtime dependencies
 - **Database**: Cloud Firestore
 - **Auth**: Firebase Auth (Google OAuth); single authorized user enforced via custom claim `authorized: true`
@@ -110,7 +109,7 @@ FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 - Monorepo root scaffold (`package.json` workspaces, root `tsconfig.json`)
 - `client/` renamed to `app/`
 - `shared/` package with `Media` type and tag helpers
-- Backend API service (`backend/`)
+- REST API routes (`app/src/routes/api/*`)
 - CLI (`cli/`)
 - Chrome extension (`extension/`)
 - Tags implementation on the frontend
