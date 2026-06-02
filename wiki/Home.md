@@ -1,29 +1,35 @@
-# Shisho (for Firebase)
+# Shisho (Firebase)
 
-Welcome to the shisho-firebase wiki!
+Personal media metadata manager. Tracks links to and metadata about images found on the internet. Single-user system hosted on Firebase/Vercel.
 
 This is a re-implementation of Shisho based on Firebase online technologies instead of an offline Sqlite Database.
 
-## App Components
+## Components
 
-### Metadata Storage
+| Component | Status | Description |
+|---|---|---|
+| SvelteKit webapp | In progress | Browser UI for querying and managing entries |
+| Backend API | Not started | REST service (Firebase Functions or Node); all clients call this |
+| CLI | Not started | Node.js tool for batch operations and scripting |
+| Chrome extension | Optional | Quick capture from a browser session |
 
-Media Metadata storage will be stored in [Cloud Firestore](https://firebase.google.com/docs/firestore) as JSON documents.
+## Architecture Decision: Separate Backend
 
-### Media Storage
+All clients (webapp, CLI, Chrome extension) call a single backend REST API. No client accesses Firestore or Firebase Storage directly. This is the only design that allows the CLI to function without embedding the web app.
 
-Media files themselves may be stored offline in a NAS solution, or in [Firebase Storage](https://firebase.google.com/docs/storage) if the monthly costs are low enough.
+## Deployment
 
-### Web App
+- Frontend: Vercel (auto-deploys from `main`)
+- Backend: Firebase Functions (preferred) or separate Node service on Vercel/Fly.io
+- Database: Cloud Firestore
+- File storage: Firebase Storage (optional per-entry)
 
-A [SvelteKit](https://kit.svelte.dev/) web frontend will allow for general querying and manipulation of media metadata. In particular it will have a single and bulk entry creation, and listing of media based on tags and other fields.
+## Auth Model
 
-This app may be hosted on Github Pages or Firebase Hosting
+Single authorized user. Firebase Auth handles Google OAuth login. A custom claim (`authorized: true`) is set on the one permitted account via the Firebase Admin SDK. The backend verifies this claim on every request — a valid Firebase session alone is not sufficient.
 
-### CLI
+See [Firebase.md](Firebase.md) for implementation notes.
 
-Shisho comes as an executable CLI which can emulate many of the Web App interactions. This will be useful for offline batch processing.
+## Data Model
 
-### Chrome Extension
-
-Optionally, shisho will have a new chrome extension (similar to the original project) which will make capturing media easier directly from a browser session.
+See [DataModel.md](DataModel.md).
