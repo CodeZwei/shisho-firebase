@@ -90,7 +90,6 @@ FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 
 - Backend API routes do not exist. Form actions in `media/import` and `media/list` are placeholders that will be replaced by `+server.ts` API routes.
 - `firebase` package is on v9; latest is v11.
-- `npm install` has not been run from the repo root since the monorepo was scaffolded — run it before starting the dev server.
 
 ## Code Conventions
 
