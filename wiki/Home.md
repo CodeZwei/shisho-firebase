@@ -19,7 +19,7 @@ All clients (webapp, CLI, Chrome extension) call a single backend REST API. No c
 
 ## Deployment
 
-- Frontend: Vercel (auto-deploys from `main`)
+- Frontend: [Vercel](webapp/Vercel.md) (auto-deploys from `main`)
 - Backend: Firebase Functions (preferred) or separate Node service on Vercel/Fly.io
 - Database: Cloud Firestore
 - File storage: Firebase Storage (optional per-entry)
@@ -28,8 +28,8 @@ All clients (webapp, CLI, Chrome extension) call a single backend REST API. No c
 
 Single authorized user. Firebase Auth handles Google OAuth login. A custom claim (`authorized: true`) is set on the one permitted account via the Firebase Admin SDK. The backend verifies this claim on every request — a valid Firebase session alone is not sufficient.
 
-See [Firebase.md](Firebase.md) for implementation notes.
+See [Firebase.md](firebase/Firebase.md) for implementation notes.
 
 ## Data Model
 
-See [DataModel.md](DataModel.md).
+See [DataModel.md](firebase/DataModel.md).

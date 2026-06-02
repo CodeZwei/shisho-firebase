@@ -59,15 +59,6 @@ PUBLIC_FIREBASE_APP_ID=
 FIREBASE_SERVICE_ACCOUNT_JSON=   # base64-encoded JSON of service account key
 ```
 
-**For Vercel deployment**: encode the service account JSON as base64 and paste it as the env var value. See: https://dev.to/vvo/how-to-add-firebase-service-account-json-files-to-vercel-ph5
-
-Decode it in `lib/firebase/server.ts`:
-```ts
-const serviceAccount = JSON.parse(
-  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_JSON!, 'base64').toString()
-);
-```
-
 ## Current State / TODOs
 
 - [ ] Move hardcoded Firebase config in `client/src/lib/firebase/client.ts` to env vars
