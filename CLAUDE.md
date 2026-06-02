@@ -88,12 +88,9 @@ FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 
 ## Known Issues
 
-- Current source is in `client/` — needs to be moved to `app/` and the monorepo root scaffolded
-- `app/src/hooks.ts` imports `GetSession`/`getSession` from `@sveltejs/kit` — these were removed in SvelteKit v2. Firebase integration is currently broken because of this.
-- Firebase config is **hardcoded** in `app/src/lib/firebase/client.ts` — must be moved to `PUBLIC_FIREBASE_*` env vars before any further work.
-- `app/src/routes/todos/` is dead template code — delete it.
-- Backend API service does not exist. Current SvelteKit form actions in `media/import` and `media/list` are placeholders that will be replaced by API calls.
+- Backend API routes do not exist. Form actions in `media/import` and `media/list` are placeholders that will be replaced by `+server.ts` API routes.
 - `firebase` package is on v9; latest is v11.
+- `npm install` has not been run from the repo root since the monorepo was scaffolded — run it before starting the dev server.
 
 ## Code Conventions
 
@@ -106,9 +103,6 @@ FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 
 ## Not Built Yet
 
-- Monorepo root scaffold (`package.json` workspaces, root `tsconfig.json`)
-- `client/` renamed to `app/`
-- `shared/` package with `Media` type and tag helpers
 - REST API routes (`app/src/routes/api/*`)
 - CLI (`cli/`)
 - Chrome extension (`extension/`)
