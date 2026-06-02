@@ -1,5 +1,5 @@
 {
-	"name": "client",
+	"name": "app",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -38,6 +38,7 @@
 		"@fontsource/fira-mono": "^4.5.0",
 		"cookie": "^0.4.1",
 		"firebase": "^9.9.0",
-		"firebase-admin": "^11.0.0"
+		"firebase-admin": "^11.0.0",
+		"shared": "*"
 	}
 }
