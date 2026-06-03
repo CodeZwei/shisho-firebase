@@ -1,8 +1,14 @@
 <script lang="ts">
     import { initAuth } from './auth';
-  
-    // TODO: Update firebase auth module with auth from cookie on startup
-    const { loginWithGoogle, logout, user } = initAuth();
+    import { browser } from '$app/environment';
+    import { readable } from 'svelte/store';
+
+    // Firebase client SDK crashes in Node.js; skip during SSR/prerender
+    function getAuth() {
+        if (!browser) return { loginWithGoogle: async () => {}, logout: async () => {}, user: readable(null) };
+        return initAuth();
+    }
+    const { loginWithGoogle, logout, user } = getAuth();
   </script>
   
   <div class="wrapper">

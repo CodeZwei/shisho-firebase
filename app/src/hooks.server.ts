@@ -30,7 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   if (!event.locals.auth) {
     const { pathname } = event.url;
-    const isPublic = pathname === '/' || pathname.startsWith('/session/') || pathname.startsWith('/api/');
+    const isPublic = pathname === '/' || pathname === '/about' || pathname.startsWith('/session/') || pathname.startsWith('/api/');
     if (!isPublic) redirect(302, '/');
   }
 
