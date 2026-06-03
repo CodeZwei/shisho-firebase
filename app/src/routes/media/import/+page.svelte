@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fetchWithAuth } from '$lib/fetchWithAuth';
+
 	let text = $state('');
 	let submitting = $state(false);
 
@@ -16,7 +18,7 @@
 			});
 
 		if (items.length > 0) {
-			await fetch('/api/media', {
+			await fetchWithAuth('/api/media', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ items }),

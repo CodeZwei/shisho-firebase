@@ -2,6 +2,7 @@
 	import { untrack } from 'svelte';
 	import type { PageData } from './$types';
 	import type { Media } from '../_types';
+	import { fetchWithAuth } from '$lib/fetchWithAuth';
 
 	let { data }: { data: PageData } = $props();
 	let mediaList: Media[] = $state(untrack(() => data.mediaList));
@@ -13,14 +14,14 @@
 		const pageUrl = input.value.trim();
 		if (!pageUrl) return;
 
-		const res = await fetch('/api/media', {
+		const res = await fetchWithAuth('/api/media', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ items: [{ pageUrl }] }),
 		});
 		if (res.ok) {
 			form.reset();
-			const listRes = await fetch('/api/media');
+			const listRes = await fetchWithAuth('/api/media');
 			if (listRes.ok) mediaList = await listRes.json();
 		}
 	}
@@ -30,7 +31,7 @@
 		if (!item) return;
 		item.pending_delete = true;
 
-		const res = await fetch(`/api/media/${id}`, { method: 'DELETE' });
+		const res = await fetchWithAuth(`/api/media/${id}`, { method: 'DELETE' });
 		if (res.ok) {
 			mediaList = mediaList.filter((m) => m.id !== id);
 		} else {

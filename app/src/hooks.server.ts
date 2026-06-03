@@ -1,5 +1,5 @@
 import { auth } from '$lib/firebase/server';
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 import * as cookie from 'cookie';
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -26,6 +26,12 @@ export const handle: Handle = async ({ event, resolve }) => {
         // invalid token — continue unauthenticated
       }
     }
+  }
+
+  if (!event.locals.auth) {
+    const { pathname } = event.url;
+    const isPublic = pathname === '/' || pathname.startsWith('/session/') || pathname.startsWith('/api/');
+    if (!isPublic) redirect(302, '/');
   }
 
   return resolve(event);
