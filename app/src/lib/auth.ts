@@ -3,6 +3,7 @@ import {readable} from 'svelte/store';
 import type {ParsedToken} from 'firebase/auth';
 import {GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect} from 'firebase/auth';
 import {browser} from '$app/environment';
+import {goto} from '$app/navigation';
 
 // Adapted from https://codechips.me/firebase-authentication-with-svelte/
 
@@ -54,6 +55,7 @@ export const initAuth = (useRedirect = false) => {
   const logout = async () => {
     await auth.signOut();
     await fetch(`${window.location.origin}/session/logout`, {method: 'post'});
+    await goto('/');
   };
 
   // wrap Firebase user in a Svelte readable store

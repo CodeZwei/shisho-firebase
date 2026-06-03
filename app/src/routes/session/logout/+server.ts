@@ -7,8 +7,12 @@ export const POST: RequestHandler = async ({request}) => {
   const sessionCookie = cookies['firebase-session-token'];
 
   if (sessionCookie) {
-    await auth.verifySessionCookie(sessionCookie)
-        .then(decodedToken => auth.revokeRefreshTokens(decodedToken.sub));
+    try {
+      const decoded = await auth.verifySessionCookie(sessionCookie);
+      await auth.revokeRefreshTokens(decoded.sub);
+    } catch {
+      // cookie already expired or invalid — still clear it
+    }
   }
 
   const options: cookie.SerializeOptions = {
