@@ -3,11 +3,13 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { parse } from './rule34.js';
 
-// Fixture captured from: https://rule34.xxx
-// To refresh, run from the repo root:
-//
-//   curl -A "Mozilla/5.0" -o app/src/lib/scrapers/fixtures/rule34.html \
-//     "https://rule34.xxx/index.php?page=post&s=view&id=1915346"
+/*
+Fixture captured from: https://rule34.xxx
+To refresh, run from the repo root:
+
+  curl -A "Mozilla/5.0" -o app/src/lib/scrapers/fixtures/rule34.html \
+    "https://rule34.xxx/index.php?page=post&s=view&id=1915346"
+*/
 
 const html = readFileSync(
 	fileURLToPath(new URL('./fixtures/rule34.html', import.meta.url)),
