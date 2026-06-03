@@ -38,6 +38,15 @@
 			item.pending_delete = false;
 		}
 	}
+
+	function displayTitle(media: Media): string {
+		if (media.title) return media.title;
+		try {
+			return new URL(media.pageUrl).hostname;
+		} catch {
+			return media.pageUrl;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -53,8 +62,26 @@
 	</form>
 
 	{#each mediaList as media (media.id)}
-		<div class="media">
-			<span class="text">{media.pageUrl}</span>
+		<div class="media" class:pending={media.pending_delete}>
+			<a class="thumb" href="/media/{media.id}">
+				{#if media.imageUrl}
+					<img src={media.imageUrl} alt={displayTitle(media)} />
+				{:else}
+					<div class="img-placeholder"></div>
+				{/if}
+			</a>
+
+			<a class="info" href="/media/{media.id}">
+				<p class="title">{displayTitle(media)}</p>
+				<span class="url">{media.pageUrl}</span>
+			</a>
+
+			<div class="rating">
+				{#each [1, 2, 3, 4, 5] as n}
+					<span class={n <= Math.round(media.rating) ? 'star filled' : 'star'}></span>
+				{/each}
+			</div>
+
 			<button
 				class="delete"
 				aria-label="Delete media"
@@ -87,13 +114,6 @@
 		outline: none;
 	}
 
-	.text {
-		position: relative;
-		display: flex;
-		align-items: center;
-		flex: 1;
-	}
-
 	.new input {
 		font-size: 28px;
 		width: 100%;
@@ -106,7 +126,7 @@
 
 	.media {
 		display: grid;
-		grid-template-columns: 1fr 2rem;
+		grid-template-columns: 5rem 1fr auto 2rem;
 		grid-gap: 0.5rem;
 		align-items: center;
 		margin: 0 0 0.5rem 0;
@@ -114,7 +134,81 @@
 		background-color: white;
 		border-radius: 8px;
 		filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.1));
-		transition: filter 0.2s, transform 0.2s;
+		transition: filter 0.2s, opacity 0.2s;
+	}
+
+	.media.pending {
+		opacity: 0.4;
+	}
+
+	.thumb {
+		width: 5rem;
+		height: 5rem;
+		border-radius: 4px;
+		overflow: hidden;
+		flex-shrink: 0;
+		text-decoration: none;
+	}
+
+	.thumb img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.img-placeholder {
+		width: 100%;
+		height: 100%;
+		background-color: var(--secondary-color);
+	}
+
+	.info {
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		text-decoration: none;
+	}
+
+	.title {
+		margin: 0;
+		font-weight: 600;
+		font-size: 0.9rem;
+		color: var(--heading-color);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.url {
+		font-size: 0.7rem;
+		color: #888;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+	}
+
+	.info:hover .url {
+		color: var(--accent-color);
+	}
+
+	.rating {
+		display: flex;
+		gap: 2px;
+		align-items: center;
+	}
+
+	.star::before {
+		content: '☆';
+		font-size: 1rem;
+		color: #ccc;
+	}
+
+	.star.filled::before {
+		content: '★';
+		color: #f5a623;
 	}
 
 	.media button {
@@ -129,6 +223,8 @@
 	.delete {
 		background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.5 5V22H19.5V5H4.5Z' fill='%23676778' stroke='%23676778' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M10 10V16.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14 10V16.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M2 5H22' stroke='%23676778' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M8 5L9.6445 2H14.3885L16 5H8Z' fill='%23676778' stroke='%23676778' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
 		opacity: 0.2;
+		align-self: start;
+		margin-top: 0.25rem;
 	}
 
 	.delete:hover,

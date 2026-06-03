@@ -8,6 +8,7 @@ export async function load({ locals }) {
 
   const snapshot = await db
     .collection('media-metadata')
+    .orderBy('createdAt', 'desc')
     .limit(50)
     .withConverter(mediaConverter)
     .get();
