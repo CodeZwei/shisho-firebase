@@ -86,6 +86,10 @@ PUBLIC_FIREBASE_APP_ID=
 FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
 ```
 
+## Working Style
+
+When troubleshooting, diagnosing, or answering questions, present a plan and wait for confirmation before executing any file changes, deletions, or commands. Do not act unilaterally on what seems like an obvious fix.
+
 ## Code Conventions
 
 - Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`) — no legacy `writable` stores or `onMount` where a rune works.
