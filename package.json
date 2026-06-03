@@ -1,0 +1,12 @@
+{
+  "name": "shisho-firebase",
+  "private": true,
+  "workspaces": [
+    "app",
+    "shared",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}

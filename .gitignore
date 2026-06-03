@@ -1,3 +1,12 @@
-.DS_Store
+## Build files
 node_modules
 public/build
+.vercel
+.netlify
+
+## OS Files
+.DS_Store
+
+## Credentials
+service-account.json
+shisho-app-firebase-adminsdk-1ltb7-0c1a30dac7.json
