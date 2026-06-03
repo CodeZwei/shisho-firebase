@@ -1,6 +1,7 @@
 import {auth} from '$lib/firebase/server';
 import type {RequestHandler} from './$types';
 import * as cookie from 'cookie';
+import {dev} from '$app/environment';
 
 export const POST: RequestHandler = async ({request}) => {
   const {idToken} = await request.json();
@@ -13,7 +14,7 @@ export const POST: RequestHandler = async ({request}) => {
     path: '/',
     maxAge: expiresIn,
     httpOnly: true,
-    secure: true
+    secure: !dev
   };
 
   return new Response(null, {

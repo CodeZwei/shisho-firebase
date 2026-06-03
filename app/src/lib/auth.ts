@@ -24,7 +24,7 @@ const userMapper = (claims: ParsedToken): User => ({
 export const initAuth = (useRedirect = false) => {
   async function performSessionLogin(token: string) {
     await fetch(`${window.location.origin}/session/login`, {
-      headers: {accept: 'application/json'},
+      headers: {'accept': 'application/json', 'content-type': 'application/json'},
       method: 'post',
       body: JSON.stringify({idToken: token})
     });
