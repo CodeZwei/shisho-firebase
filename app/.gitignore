@@ -5,6 +5,7 @@
 .wrangler
 /.svelte-kit
 /build
+/test-results
 
 # OS
 .DS_Store
