@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import type { Media } from 'shared';
+import type { Parser } from './index.js';
 
 function extractTags($: cheerio.CheerioAPI, typeClass: string): string[] {
 	return $(`.tag-type-${typeClass}`)
@@ -8,7 +8,7 @@ function extractTags($: cheerio.CheerioAPI, typeClass: string): string[] {
 		.filter(Boolean);
 }
 
-export async function scrape(pageUrl: string, html: string): Promise<Partial<Media>> {
+export const parse: Parser = (html) => {
 	const $ = cheerio.load(html);
 
 	return {
@@ -20,4 +20,4 @@ export async function scrape(pageUrl: string, html: string): Promise<Partial<Med
 		tags_general: extractTags($, 'general'),
 		tags_meta: extractTags($, 'metadata'),
 	};
-}
+};

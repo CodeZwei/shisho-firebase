@@ -1,5 +1,5 @@
-import type { Media } from 'shared';
+import type { Parser } from './index.js';
 
-export async function scrape(pageUrl: string, html: string): Promise<Partial<Media>> {
+export const parse: Parser = (_html) => {
 	throw new Error('not implemented');
-}
+};
