@@ -28,4 +28,10 @@ describe('rule34 parser', () => {
 		expect.soft(result.external.tags_general).toEqual(["2girls","areola","areolae","arms behind back","arms tied behind back","bangs","beauty mark","before sex","big breasts","black hair","blonde hair","blush","blushing","bondage","bound","bound arms","breasts","closed eyes","completely nude","completely nude female","dominant","dominant female","drool","drooling","earrings","erect nipples","eyeliner","eyeshadow","eyewear","female","female only","femdom","femsub","gag","gagged","glasses","gloves","hair bondage","hair gag","hair grab","hair pull","human","human only","large areolae","large breasts","lesbian","lezdom","lezsub","long hair","multiple females","multiple girls","nipples","nude","nude female","painted nails","perky breasts","ponytail","prehensile hair","restrained","saliva","saliva trail","submissive","submissive female","sweat","thick lips","tied hair","tied up","very long hair","witch","yuri"]);
 		expect.soft(result.external.tags_meta).toEqual(["crossover"]);
 	});
+
+	it('fails if the provided html is a CAPTCHA challenge', () => {
+		const html = "<title>Rule34 CAPTCHA"
+
+		expect(() => parse(html)).toThrow("CAPTCHA detected — page was not returned");
+	});
 });

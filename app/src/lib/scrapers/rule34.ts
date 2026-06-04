@@ -11,9 +11,14 @@ function extractTags($: cheerio.CheerioAPI, typeClass: string): string[] {
 export const parse: Parser = (html) => {
 	const $ = cheerio.load(html);
 
+	const title = $('title').text().trim();
+	if (title.toLowerCase().includes('captcha')) {
+		throw new Error('CAPTCHA detected — page was not returned');
+	}
+
 	return {
 		external: {
-			title: $('title').text().trim() || undefined,
+			title: title || undefined,
 			imageUrl: $('meta[property="og:image"]').attr('content'),
 			tags_copyright: extractTags($, 'copyright'),
 			tags_character: extractTags($, 'character'),
