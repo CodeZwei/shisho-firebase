@@ -24,8 +24,8 @@ See [wiki/firebase/DataModel.md](wiki/firebase/DataModel.md) for the final data 
 - [x] Add `app/src/routes/api/media/[id]/import/+server.ts` — POST endpoint: reads `pageUrl`, runs scraper, writes `external.*`, `tags_all`, and `import.*`
 
 ### Phase 5 — UI
-- [ ] `app/src/routes/media/[id]/+page.svelte` — update state and form bindings for nested field paths
-- [ ] Add Reimport button on the details page — calls the import endpoint, shows loading/error/success state
-- [ ] Display import metadata on the details page (`import.status`, `import.last_imported_at`, `import.last_error`)
-- [ ] `app/src/routes/media/list/+page.svelte` — `imageUrl` → `external.imageUrl`, `rating` → `user.rating`
-- [ ] `app/src/routes/media/list/_sample-data.ts` — update shape to match new type
+- [x] `app/src/routes/media/[id]/+page.svelte` — update state and form bindings for nested field paths
+- [x] Add Reimport button on the details page — calls the import endpoint, shows loading/error/success state
+- [x] Display import metadata on the details page (`import.status`, `import.last_imported_at`, `import.last_error`)
+- [x] `app/src/routes/media/list/+page.svelte` — `imageUrl` → `external.imageUrl`, `rating` → `user.rating`
+- [x] `app/src/routes/media/list/_sample-data.ts` — update shape to match new type
