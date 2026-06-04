@@ -16,7 +16,7 @@ See [wiki/firebase/DataModel.md](wiki/firebase/DataModel.md) for the final data 
 - [x] Update scraper tests to match new return shape
 
 ### Phase 3 — Firestore Layer
-- [ ] `app/src/routes/media/_types.ts` — update `mediaConverter` to map to/from the nested structure
+- [x] `app/src/routes/media/_types.ts` — update `mediaConverter` to map to/from the nested structure
 
 ### Phase 4 — API Routes
 - [ ] `app/src/routes/api/media/+server.ts` — POST writes initial document with `import.status: "unimported"`, `import.last_imported_at: null`
