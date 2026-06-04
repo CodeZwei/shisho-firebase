@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { Scraper, ParserResult } from './_types.js';
 
-export function parse(html: string): ParserResult {
+function parse(html: string): ParserResult {
 	const $ = cheerio.load(html);
 
 	const pageTitle = $('title').text().trim();

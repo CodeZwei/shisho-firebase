@@ -1,7 +1,7 @@
 import { RULE34_API_KEY, RULE34_USER_ID } from '$env/static/private';
 import type { Scraper } from './_types.js';
 
-export interface Rule34ApiPost {
+interface Rule34ApiPost {
 	id: number;
 	file_url: string;
 	tags: string;
@@ -55,6 +55,7 @@ export const scraper: Scraper = {
 
 		return {
 			external: {
+				id: postId,
 				imageUrl: post.file_url,
 				title: `Rule 34 - Post #${post.id}`,
 				tags: post.tags.split(' ').filter(Boolean),

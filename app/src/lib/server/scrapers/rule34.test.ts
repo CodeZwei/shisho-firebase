@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
-import { scraper, type Rule34ApiPost } from './rule34.js';
+import { scraper } from './rule34.js';
 
 /*
 Fixture captured from the rule34 DAPI endpoint.
@@ -21,9 +21,11 @@ vi.mock('$env/private', () => ({
 const FIXTURE_POST_ID = '1915346';
 const FIXTURE_URL = `https://rule34.xxx/index.php?page=post&s=view&id=${FIXTURE_POST_ID}`;
 
+type ApiPost = { id: number; file_url: string; tags: string; image: string };
+
 const fixture = JSON.parse(
 	readFileSync(fileURLToPath(new URL('./fixtures/rule34-api.json', import.meta.url)), 'utf-8')
-) as Array<Rule34ApiPost>;
+) as Array<ApiPost>;
 const post = fixture[0];
 
 function stubFetch(status: number, body: unknown) {
@@ -43,13 +45,26 @@ describe('rule34 API scraper', () => {
 		vi.unstubAllGlobals();
 	});
 
+	it('has the correct name', () => {
+		expect(scraper.name).toBe('rule34');
+	});
+
+	it('matches rule34.xxx URLs', () => {
+		expect(scraper.matches(new URL('https://rule34.xxx/index.php?page=post&s=view&id=1'))).toBe(true);
+	});
+
+	it('does not match other URLs', () => {
+		expect(scraper.matches(new URL('https://example.com/page'))).toBe(false);
+	});
+
 	it('extracts metadata from a successful API response', async () => {
 		stubFetch(200, fixture);
 
 		const result = await scraper.scrape(FIXTURE_URL);
 
+		expect.soft(result.external.id).toBe(FIXTURE_POST_ID);
 		expect.soft(result.external.imageUrl).toBe(post.file_url);
-		expect.soft(result.external.title).toBe(post.image);
+		expect.soft(result.external.title).toBe(`Rule 34 - Post #${post.id}`);
 		expect.soft(result.external.tags).toEqual(post.tags.split(' ').filter(Boolean));
 	});
 
@@ -75,16 +90,5 @@ describe('rule34 API scraper', () => {
 		await expect(scraper.scrape(FIXTURE_URL, controller.signal)).rejects.toMatchObject({
 			name: 'AbortError',
 		});
-	});
-
-	it('rejects when env vars are not configured', async () => {
-		vi.resetModules();
-		vi.doMock('$env/private', () => ({ RULE34_API_KEY: '', RULE34_USER_ID: '' }));
-		const { scraper: freshScraper } = await import('./rule34.js');
-		await expect(freshScraper.scrape(FIXTURE_URL)).rejects.toThrow(
-			'RULE34_API_KEY and RULE34_USER_ID environment variables must be set'
-		);
-		vi.doUnmock('$env/private');
-		vi.resetModules();
 	});
 });

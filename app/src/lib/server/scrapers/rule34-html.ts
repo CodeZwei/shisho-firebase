@@ -21,8 +21,7 @@ function extractPostId(pageUrl: string): string {
 	return id;
 }
 
-// TODO: Remove export function and refactor tests to mock the fetch so they can call with the Scraper interface instead.
-export function parse(html: string): ParserResult {
+function parse(html: string): ParserResult {
 	const $ = cheerio.load(html);
 
 	const title = $('title').text().trim();
