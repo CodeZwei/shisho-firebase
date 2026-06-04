@@ -7,8 +7,8 @@ See [wiki/firebase/DataModel.md](wiki/firebase/DataModel.md) for the final data 
 ## Tasks
 
 ### Phase 1 — Type System
-- [ ] `shared/src/types.ts` — redefine `Media` with nested `external`, `user`, `import` namespaces and top-level `tags_all`
-- [ ] `shared/src/tags.ts` — update `buildTags()` to read from `external.tags_*` and `user.tags`
+- [x] `shared/src/types.ts` — redefine `Media` with nested `external`, `user`, `import` namespaces and top-level `tags_all`
+- [x] `shared/src/tags.ts` — update `buildTags()` to read from `external.tags_*` and `user.tags`
 
 ### Phase 2 — Scrapers
 - [ ] `app/src/lib/scrapers/rule34.ts` — return shape changes to `{ external: { imageUrl, tags_* } }`
