@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { scraper, type Rule34ApiPost } from './rule34.js';
@@ -7,11 +7,16 @@ import { scraper, type Rule34ApiPost } from './rule34.js';
 Fixture captured from the rule34 DAPI endpoint.
 To refresh, run from the repo root:
 
-  curl -o app/src/lib/scrapers/fixtures/rule34-api.json \
+  curl -o app/src/lib/server/scrapers/fixtures/rule34-api.json \
     "https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&id=1915346&api_key=YOUR_KEY&user_id=YOUR_ID"
 
 Locate API_KEY and USER_ID from https://rule34.xxx/index.php?page=account&s=options.
 */
+
+vi.mock('$env/private', () => ({
+	RULE34_API_KEY: 'test-key',
+	RULE34_USER_ID: '99999',
+}));
 
 const FIXTURE_POST_ID = '1915346';
 const FIXTURE_URL = `https://rule34.xxx/index.php?page=post&s=view&id=${FIXTURE_POST_ID}`;
@@ -34,14 +39,7 @@ function stubFetch(status: number, body: unknown) {
 }
 
 describe('rule34 API scraper', () => {
-	beforeEach(() => {
-		process.env.RULE34_API_KEY = 'test-key';
-		process.env.RULE34_USER_ID = '99999';
-	});
-
 	afterEach(() => {
-		delete process.env.RULE34_API_KEY;
-		delete process.env.RULE34_USER_ID;
 		vi.unstubAllGlobals();
 	});
 
@@ -80,11 +78,13 @@ describe('rule34 API scraper', () => {
 	});
 
 	it('rejects when env vars are not configured', async () => {
-		delete process.env.RULE34_API_KEY;
-		delete process.env.RULE34_USER_ID;
-
-		await expect(scraper.scrape(FIXTURE_URL)).rejects.toThrow(
+		vi.resetModules();
+		vi.doMock('$env/private', () => ({ RULE34_API_KEY: '', RULE34_USER_ID: '' }));
+		const { scraper: freshScraper } = await import('./rule34.js');
+		await expect(freshScraper.scrape(FIXTURE_URL)).rejects.toThrow(
 			'RULE34_API_KEY and RULE34_USER_ID environment variables must be set'
 		);
+		vi.doUnmock('$env/private');
+		vi.resetModules();
 	});
 });

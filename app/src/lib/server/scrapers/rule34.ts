@@ -1,20 +1,18 @@
+import { RULE34_API_KEY, RULE34_USER_ID } from '$env/static/private';
 import type { Scraper } from './_types.js';
 
 export interface Rule34ApiPost {
-	id: string;
-	image: string;
+	id: number;
 	file_url: string;
-	preview_url: string;
 	tags: string;
+	image: string;
 }
 
 function requireEnv(): { apiKey: string; userId: string } {
-	const apiKey = process.env.RULE34_API_KEY;
-	const userId = process.env.RULE34_USER_ID;
-	if (!apiKey || !userId) {
+	if (!RULE34_API_KEY || !RULE34_USER_ID) {
 		throw new Error('RULE34_API_KEY and RULE34_USER_ID environment variables must be set');
 	}
-	return { apiKey, userId };
+	return { apiKey: RULE34_API_KEY, userId: RULE34_USER_ID };
 }
 
 function extractPostId(pageUrl: string): string {
@@ -57,10 +55,8 @@ export const scraper: Scraper = {
 
 		return {
 			external: {
-				id: post.id,
 				imageUrl: post.file_url,
-				thumbnailUrl: post.preview_url,
-				title: post.image,
+				title: `Rule 34 - Post #${post.id}`,
 				tags: post.tags.split(' ').filter(Boolean),
 			},
 		};

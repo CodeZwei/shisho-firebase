@@ -7,7 +7,7 @@ import { parse } from './generic.js';
 Fixture captured from: https://imgur.com as a generic example
 To refresh, run from the repo root:
 
-  curl -A "Mozilla/5.0" -o app/src/lib/scrapers/fixtures/generic.html \
+  curl -A "Mozilla/5.0" -o app/src/lib/server/scrapers/fixtures/generic.html \
     "https://imgur.com/a/QR0nJVu"
 */
 
@@ -20,7 +20,7 @@ describe('generic parser', () => {
 	it('extracts limited metadata from a known post', () => {
 		const result = parse(html);
 
-		
+
 		expect.soft(result.external.title).toBe('imgur.com');
 		expect.soft(result.external.imageUrl).toBe('https://i.imgur.com/sKCRpVph.jpg');
 	});

@@ -2,7 +2,7 @@ import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/firebase/server';
 import { mediaConverter } from '../../../../media/_types';
-import { scrape } from '$lib/scrapers/index.js';
+import { scrape } from '$lib/server/scrapers/index.js';
 import { buildTags, type Media } from 'shared';
 
 export const POST: RequestHandler = async ({ locals, params }) => {

@@ -7,7 +7,7 @@ import { parse } from './rule34-html.js';
 Fixture captured from: https://rule34.xxx
 To refresh, run from the repo root:
 
-  curl -A "Mozilla/5.0" -o app/src/lib/scrapers/fixtures/rule34.html \
+  curl -A "Mozilla/5.0" -o app/src/lib/server/scrapers/fixtures/rule34.html \
     "https://rule34.xxx/index.php?page=post&s=view&id=1915346"
 */
 
