@@ -16,11 +16,7 @@ type Media = {
   external: {
     imageUrl: string;
     title: string;
-    tags_copyright: string[];
-    tags_character: string[];
-    tags_artist: string[];
-    tags_general: string[];
-    tags_meta: string[];
+    tags: string[];
   };
 
   user: {
@@ -51,27 +47,22 @@ Reimport overwrites all `external.*` fields and updates `import.*`. It never tou
 
 ## Field Notes
 
-**`tags_all`**: Write-time denormalization — the de-duplicated union of all `external.tags_*` arrays and `user.tags`. Never written directly; always recomputed and written atomically alongside any tag update. Enables cross-category queries via Firestore `array-contains` without querying multiple fields separately.
+**`tags_all`**: Write-time denormalization — the de-duplicated union of `external.tags` and `user.tags`. Never written directly; always recomputed and written atomically alongside any tag update. Enables queries via Firestore `array-contains` without querying multiple fields separately.
+
+**`external.tags`**: Flat list of tags returned by the scraper. For booru sources (e.g., rule34) this is the full flattened tag list from the API — tag categories (artist, character, copyright, etc.) are not preserved, as they are specific to booru taxonomy and do not translate to other sources. For other sites this is typically empty; the user fills in tags manually.
 
 **`external.title` vs `user.title`**: `external.title` is whatever the scraper returns and will be overwritten on reimport. `user.title` is an optional user correction — set it when the scraped title is wrong or missing. The UI should display `user.title` when set, falling back to `external.title`.
 
 **`user.rating`**: Integer 0–5. 0 means unrated. User-owned — reimport never touches it.
 
-**`user.tags`**: Free-form user-defined labels. Not constrained to booru taxonomy. Included in `tags_all`.
-
-**Tag categories** (`external.tags_*`): Lowercase strings, underscores for spaces, matching booru-style taxonomy.
-- `tags_copyright`: Franchise or IP (e.g., `halo`, `overwatch`)
-- `tags_character`: Named characters depicted (e.g., `master_chief`, `cortana`)
-- `tags_artist`: Artist handle(s) who produced the image
-- `tags_general`: Content descriptors for what's in the image
-- `tags_meta`: Descriptors about the image file/post itself (e.g., `ai_generated`, `large_filesize`)
+**`user.tags`**: Free-form user-defined labels. Not constrained to any taxonomy. Included in `tags_all`.
 
 **`import.status`**:
 - `"unimported"` — no import has ever been attempted
 - `"success"` — last import completed without error
 - `"failed"` — last import threw an error; see `import.last_error`
 
-**`import.parser`**: The parser key used on the last import run (e.g., `"rule34"`, `"generic"`). Stored explicitly so reimport jobs can be filtered by parser (e.g., reimport all `rule34` documents after updating that parser).
+**`import.parser`**: The parser key used on the last import run (e.g., `"rule34"`, `"rule34-html"`, `"generic"`). Stored explicitly so reimport jobs can be filtered by parser (e.g., reimport all `rule34` documents after updating that parser).
 
 **`import.last_error`**: Human-readable error message from the last failed import. `null` on success.
 
@@ -84,7 +75,7 @@ Reimport overwrites all `external.*` fields and updates `import.*`. It never tou
 Nested map updates require dot-notation to avoid replacing the entire map. Always use:
 
 ```typescript
-doc.update({ "external.imageUrl": "...", "external.tags_general": [...] })
+doc.update({ "external.imageUrl": "...", "external.tags": [...] })
 // NOT:
 doc.update({ external: { imageUrl: "..." } }) // replaces the whole external map
 ```
@@ -104,8 +95,6 @@ The current rules are not complete — see [Firebase.md](Firebase.md).
 Queries that will need composite indexes:
 - `tags_all array-contains X` + `created_at desc` (list by tag, newest first)
 - `tags_all array-contains X` + `user.rating desc` (list by tag, highest rated)
-- `external.tags_character array-contains X` + `created_at desc` (filter by character)
-- `external.tags_copyright array-contains X` + `user.rating desc` (filter by franchise, best first)
 - `user.rating > 0` + `user.rating desc` (list rated entries)
 - `import.status == "unimported"` + `created_at asc` (queue of pending imports)
 - `import.status == "failed"` + `created_at asc` (failed imports for retry)

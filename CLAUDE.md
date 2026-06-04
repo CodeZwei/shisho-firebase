@@ -46,7 +46,7 @@ npm workspaces monorepo. Single `node_modules` and base `tsconfig.json` at the r
 └── shared/            # shared TypeScript types and helpers
     └── src/
         ├── types.ts   # Media type and related interfaces
-        └── tags.ts    # tag union helper (builds `tags` from category arrays)
+        └── tags.ts    # tag union helper (builds `tags_all` from external.tags and user.tags)
 ```
 
 Each package has its own `package.json` and extends the root `tsconfig.json`. The `shared` package is the source of truth for the `Media` type — all other packages import from it.
@@ -84,6 +84,8 @@ PUBLIC_FIREBASE_STORAGE_BUCKET=
 PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 PUBLIC_FIREBASE_APP_ID=
 FIREBASE_SERVICE_ACCOUNT_JSON=   # server-side only, base64-encoded
+RULE34_API_KEY=                  # rule34.xxx API key, from account settings
+RULE34_USER_ID=                  # rule34.xxx numeric user ID
 ```
 
 ## Working Style
