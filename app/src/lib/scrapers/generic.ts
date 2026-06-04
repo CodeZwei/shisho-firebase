@@ -3,6 +3,12 @@ import type { Scraper, ParserResult } from './_types.js';
 
 export function parse(html: string): ParserResult {
 	const $ = cheerio.load(html);
+
+	const pageTitle = $('title').text().trim();
+	if (pageTitle.toLowerCase().includes('captcha')) {
+		throw new Error('CAPTCHA detected — page was not returned');
+	}
+
 	const meta = (attr: string, name: string) =>
 		$(`meta[${attr}="${name}"]`).attr('content')?.trim() || undefined;
 

@@ -24,4 +24,11 @@ describe('generic parser', () => {
 		expect.soft(result.external.title).toBe('imgur.com');
 		expect.soft(result.external.imageUrl).toBe('https://i.imgur.com/sKCRpVph.jpg');
 	});
+
+
+	it('fails if the provided html is a CAPTCHA challenge', () => {
+		const html = "<title>Example.com CAPTCHA"
+
+		expect(() => parse(html)).toThrow("CAPTCHA detected — page was not returned");
+	});
 });
