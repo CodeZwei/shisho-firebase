@@ -65,8 +65,8 @@
 	{#each mediaList as media (media.id)}
 		<div class="media" class:pending={media.pending_delete}>
 			<a class="thumb" href="/media/{media.id}">
-				{#if media.external.imageUrl}
-					<img src={media.external.imageUrl} alt={displayTitle(media)} />
+				{#if media.external.thumbnailUrl || media.external.imageUrl}
+					<img src={media.external.thumbnailUrl || media.external.imageUrl} alt={displayTitle(media)} />
 				{:else}
 					<div class="img-placeholder"></div>
 				{/if}

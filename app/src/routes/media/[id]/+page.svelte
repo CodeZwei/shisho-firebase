@@ -104,8 +104,8 @@
 	<a class="back" href="/media/list">← Back to list</a>
 
 	<div class="preview">
-		{#if data.media.external.imageUrl}
-			<img src={data.media.external.imageUrl} alt={title || data.media.external.title || 'preview'} />
+		{#if data.media.external.thumbnailUrl || data.media.external.imageUrl}
+			<img src={data.media.external.thumbnailUrl || data.media.external.imageUrl} alt={title || data.media.external.title || 'preview'} />
 		{:else}
 			<div class="img-placeholder"></div>
 		{/if}
