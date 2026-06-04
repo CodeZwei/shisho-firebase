@@ -1,11 +1,7 @@
 import * as cheerio from 'cheerio';
-import type { Parser } from './index.js';
+import type { Scraper, ParserResult } from './_types.js';
 
-/** 
- * Fallback parser for a generic page hosting an image.
- * Currently does not perform very well, even on known websites.
- */
-export const parse: Parser = (html) => {
+export function parse(html: string): ParserResult {
 	const $ = cheerio.load(html);
 	const meta = (attr: string, name: string) =>
 		$(`meta[${attr}="${name}"]`).attr('content')?.trim() || undefined;
@@ -23,4 +19,14 @@ export const parse: Parser = (html) => {
 	const title = rawTitle?.replace(/\s*[|\-–—]\s*[^|\-–—]+$/, '').trim() || undefined;
 
 	return { external: { imageUrl, title } };
+}
+
+export const scraper: Scraper = {
+	name: 'generic',
+	matches: (_url) => true,
+	scrape: async (pageUrl, signal) => {
+		const response = await fetch(pageUrl, { signal });
+		const html = await response.text();
+		return parse(html);
+	},
 };

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
-import { parse } from './rule34.js';
+import { parse } from './rule34-html.js';
 
 /*
 Fixture captured from: https://rule34.xxx
@@ -16,7 +16,7 @@ const html = readFileSync(
 	'utf-8'
 );
 
-describe('rule34 parser', () => {
+describe('rule34-html parser', () => {
 	it('extracts all metadata from a known post', () => {
 		const result = parse(html);
 

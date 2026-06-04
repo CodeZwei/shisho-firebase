@@ -1,9 +1,20 @@
 import * as cheerio from 'cheerio';
-import type { Parser } from './index.js';
+import type { Scraper, ParserResult } from './_types.js';
 
 const TAG_CLASSES = ['copyright', 'character', 'artist', 'general', 'metadata'];
 
-export const parse: Parser = (html) => {
+export const scraper: Scraper = {
+	name: 'rule34-html',
+	matches: (url) => url.hostname === 'rule34.xxx',
+	scrape: async (pageUrl, signal) => {
+		const response = await fetch(pageUrl, { signal });
+		const html = await response.text();
+		return parse(html);
+	},
+};
+
+// TODO: Remove export function and refactor tests to mock the fetch so they can call with the Scraper interface instead.
+export function parse(html: string): ParserResult {
 	const $ = cheerio.load(html);
 
 	const title = $('title').text().trim();
@@ -25,4 +36,4 @@ export const parse: Parser = (html) => {
 			tags,
 		},
 	};
-};
+}
