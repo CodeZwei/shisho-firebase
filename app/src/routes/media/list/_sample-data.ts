@@ -3,11 +3,7 @@ import type { Media } from '../_types';
 const blankExternal: Media['external'] = {
   imageUrl: '',
   title: '',
-  tags_copyright: [],
-  tags_character: [],
-  tags_artist: [],
-  tags_general: [],
-  tags_meta: [],
+  tags: [],
 };
 
 const blankUser: Media['user'] = {

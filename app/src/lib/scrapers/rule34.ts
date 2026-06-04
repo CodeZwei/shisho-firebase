@@ -1,12 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { Parser } from './index.js';
 
-function extractTags($: cheerio.CheerioAPI, typeClass: string): string[] {
-	return $(`.tag-type-${typeClass}`)
-		.map((_, el) => $(el).find('a').eq(1).text().trim())
-		.get()
-		.filter(Boolean);
-}
+const TAG_CLASSES = ['copyright', 'character', 'artist', 'general', 'metadata'];
 
 export const parse: Parser = (html) => {
 	const $ = cheerio.load(html);
@@ -16,15 +11,18 @@ export const parse: Parser = (html) => {
 		throw new Error('CAPTCHA detected — page was not returned');
 	}
 
+	const tags = TAG_CLASSES.flatMap((cls) =>
+		$(`.tag-type-${cls}`)
+			.map((_, el) => $(el).find('a').eq(1).text().trim())
+			.get()
+			.filter(Boolean)
+	);
+
 	return {
 		external: {
 			title: title || undefined,
 			imageUrl: $('meta[property="og:image"]').attr('content'),
-			tags_copyright: extractTags($, 'copyright'),
-			tags_character: extractTags($, 'character'),
-			tags_artist: extractTags($, 'artist'),
-			tags_general: extractTags($, 'general'),
-			tags_meta: extractTags($, 'metadata'),
+			tags,
 		},
 	};
 };

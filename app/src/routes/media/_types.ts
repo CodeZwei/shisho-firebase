@@ -30,11 +30,7 @@ export const mediaConverter: FirestoreDataConverter<Media> = {
       external: {
         imageUrl: data.external?.imageUrl ?? '',
         title: data.external?.title ?? '',
-        tags_copyright: data.external?.tags_copyright ?? [],
-        tags_character: data.external?.tags_character ?? [],
-        tags_artist: data.external?.tags_artist ?? [],
-        tags_general: data.external?.tags_general ?? [],
-        tags_meta: data.external?.tags_meta ?? [],
+        tags: data.external?.tags ?? [],
       },
       user: {
         title: data.user?.title ?? null,

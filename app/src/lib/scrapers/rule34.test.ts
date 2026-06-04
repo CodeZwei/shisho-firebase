@@ -22,11 +22,18 @@ describe('rule34 parser', () => {
 
 		expect.soft(result.external.title).toBe("Rule 34 - 2girls areola areolae arms behind back arms tied behind back bangs bayonetta bayonetta (character) beauty mark before sex big breasts black hair blonde hair blush blushing bondage bound bound arms breasts cherry-gig closed eyes completely nude completely nude female crossover dominant dominant female drool drooling earrings erect nipples eyeliner eyeshadow eyewear female female only femdom femsub gag gagged glasses gloves hair bondage hair gag hair grab hair pull human human only large areolae large breasts lesbian lezdom lezsub long hair metroid multiple females multiple girls nintendo nipples nude nude female painted nails perky breasts ponytail prehensile hair restrained saliva saliva trail samus aran submissive submissive female sweat thick lips tied hair tied up very long hair witch yuri | 1915346");
 		expect.soft(result.external.imageUrl).toBe("https://wimg.rule34.xxx//images/1769/f8769b4d0ec93ee5c38207b1693afccc.jpeg?1915346");
-		expect.soft(result.external.tags_copyright).toEqual(["bayonetta", "metroid", "nintendo"]);
-		expect.soft(result.external.tags_character).toEqual(["bayonetta (character)", "samus aran"]);
-		expect.soft(result.external.tags_artist).toEqual(["cherry-gig"]);
-		expect.soft(result.external.tags_general).toEqual(["2girls","areola","areolae","arms behind back","arms tied behind back","bangs","beauty mark","before sex","big breasts","black hair","blonde hair","blush","blushing","bondage","bound","bound arms","breasts","closed eyes","completely nude","completely nude female","dominant","dominant female","drool","drooling","earrings","erect nipples","eyeliner","eyeshadow","eyewear","female","female only","femdom","femsub","gag","gagged","glasses","gloves","hair bondage","hair gag","hair grab","hair pull","human","human only","large areolae","large breasts","lesbian","lezdom","lezsub","long hair","multiple females","multiple girls","nipples","nude","nude female","painted nails","perky breasts","ponytail","prehensile hair","restrained","saliva","saliva trail","submissive","submissive female","sweat","thick lips","tied hair","tied up","very long hair","witch","yuri"]);
-		expect.soft(result.external.tags_meta).toEqual(["crossover"]);
+		expect.soft(result.external.tags).toEqual([
+			// copyright
+			"bayonetta", "metroid", "nintendo",
+			// character
+			"bayonetta (character)", "samus aran",
+			// artist
+			"cherry-gig",
+			// general
+			"2girls","areola","areolae","arms behind back","arms tied behind back","bangs","beauty mark","before sex","big breasts","black hair","blonde hair","blush","blushing","bondage","bound","bound arms","breasts","closed eyes","completely nude","completely nude female","dominant","dominant female","drool","drooling","earrings","erect nipples","eyeliner","eyeshadow","eyewear","female","female only","femdom","femsub","gag","gagged","glasses","gloves","hair bondage","hair gag","hair grab","hair pull","human","human only","large areolae","large breasts","lesbian","lezdom","lezsub","long hair","multiple females","multiple girls","nipples","nude","nude female","painted nails","perky breasts","ponytail","prehensile hair","restrained","saliva","saliva trail","submissive","submissive female","sweat","thick lips","tied hair","tied up","very long hair","witch","yuri",
+			// meta
+			"crossover",
+		]);
 	});
 
 	it('fails if the provided html is a CAPTCHA challenge', () => {

@@ -46,11 +46,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         external: {
           imageUrl: '',
           title: '',
-          tags_copyright: [],
-          tags_character: [],
-          tags_artist: [],
-          tags_general: [],
-          tags_meta: [],
+          tags: [],
         },
         user: {
           title: null,

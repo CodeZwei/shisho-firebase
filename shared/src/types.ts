@@ -9,11 +9,7 @@ export type Media = {
   external: {
     imageUrl: string;
     title: string;
-    tags_copyright: string[];
-    tags_character: string[];
-    tags_artist: string[];
-    tags_general: string[];
-    tags_meta: string[];
+    tags: string[];
   };
 
   user: {
