@@ -1,7 +1,6 @@
-import {Timestamp} from 'firebase/firestore';
-import type {Media} from '../_types';
+import type { Media } from '../_types';
 
-const blankFields = {
+const blankExternal: Media['external'] = {
   imageUrl: '',
   title: '',
   tags_copyright: [],
@@ -9,42 +8,65 @@ const blankFields = {
   tags_artist: [],
   tags_general: [],
   tags_meta: [],
-  tags: [],
+};
+
+const blankUser: Media['user'] = {
+  title: null,
+  notes: '',
   rating: 0,
-  file_key: null,
+  tags: [],
+};
+
+const blankImport: Media['import'] = {
+  status: 'unimported',
+  last_imported_at: null,
+  parser: null,
+  last_error: null,
 };
 
 export const sampleMedia: Media[] = [
   {
-    ...blankFields,
     id: '0001',
-    created_at: Timestamp.now().toMillis(),
+    created_at: Date.now(),
     pageUrl: 'http://www.example.com/media/01',
-    notes: '',
+    file_key: null,
     pending_delete: false,
+    tags_all: [],
+    external: { ...blankExternal },
+    user: { ...blankUser },
+    import: { ...blankImport },
   },
   {
-    ...blankFields,
     id: '0002',
-    created_at: Timestamp.now().toMillis(),
+    created_at: Date.now(),
     pageUrl: 'http://www.example.com/media/02',
-    notes: '',
+    file_key: null,
     pending_delete: false,
+    tags_all: [],
+    external: { ...blankExternal },
+    user: { ...blankUser },
+    import: { ...blankImport },
   },
   {
-    ...blankFields,
     id: '0003',
-    created_at: Timestamp.now().toMillis(),
+    created_at: Date.now(),
     pageUrl: 'http://www.example.com/media/03',
-    notes: '',
+    file_key: null,
     pending_delete: false,
+    tags_all: [],
+    external: { ...blankExternal },
+    user: { ...blankUser },
+    import: { ...blankImport },
   },
   {
-    ...blankFields,
     id: '0004',
-    created_at: Timestamp.now().toMillis(),
+    created_at: Date.now(),
     pageUrl: 'http://www.example.com/media/04',
-    notes: '',
+    file_key: null,
     pending_delete: false,
-  }
+    tags_all: [],
+    external: { ...blankExternal },
+    user: { ...blankUser },
+    import: { ...blankImport },
+  },
 ];

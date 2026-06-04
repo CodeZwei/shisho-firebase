@@ -2,7 +2,6 @@ import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/firebase/server';
 import { mediaConverter } from '../../media/_types';
-import { Timestamp } from 'firebase-admin/firestore';
 import type { Media } from 'shared';
 
 export const GET: RequestHandler = async ({ locals }) => {
@@ -36,11 +35,35 @@ export const POST: RequestHandler = async ({ locals, request }) => {
   for (let i = 0; i < body.items.length; i += chunkSize) {
     const batch = db.batch();
     for (const item of body.items.slice(i, i + chunkSize)) {
-      batch.set(col.doc(), {
+      const docRef = col.doc().withConverter(mediaConverter);
+      batch.set(docRef, {
+        id: docRef.id,
         pageUrl: item.pageUrl,
-        notes: item.notes ?? '',
-        createdAt: Timestamp.now(),
+        created_at: Date.now(),
+        file_key: null,
         pending_delete: false,
+        tags_all: [],
+        external: {
+          imageUrl: '',
+          title: '',
+          tags_copyright: [],
+          tags_character: [],
+          tags_artist: [],
+          tags_general: [],
+          tags_meta: [],
+        },
+        user: {
+          title: null,
+          notes: item.notes ?? '',
+          rating: 0,
+          tags: [],
+        },
+        import: {
+          status: 'unimported',
+          last_imported_at: null,
+          parser: null,
+          last_error: null,
+        },
       });
     }
     batches.push(batch);

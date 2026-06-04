@@ -21,7 +21,7 @@ describe('generic parser', () => {
 		const result = parse(html);
 
 		
-		expect.soft(result.title).toBe('imgur.com');
-		expect.soft(result.imageUrl).toBe('https://i.imgur.com/sKCRpVph.jpg');
+		expect.soft(result.external.title).toBe('imgur.com');
+		expect.soft(result.external.imageUrl).toBe('https://i.imgur.com/sKCRpVph.jpg');
 	});
 });

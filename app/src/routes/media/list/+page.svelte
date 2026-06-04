@@ -40,7 +40,8 @@
 	}
 
 	function displayTitle(media: Media): string {
-		if (media.title) return media.title;
+		if (media.user.title) return media.user.title;
+		if (media.external.title) return media.external.title;
 		try {
 			return new URL(media.pageUrl).hostname;
 		} catch {
@@ -64,8 +65,8 @@
 	{#each mediaList as media (media.id)}
 		<div class="media" class:pending={media.pending_delete}>
 			<a class="thumb" href="/media/{media.id}">
-				{#if media.imageUrl}
-					<img src={media.imageUrl} alt={displayTitle(media)} />
+				{#if media.external.imageUrl}
+					<img src={media.external.imageUrl} alt={displayTitle(media)} />
 				{:else}
 					<div class="img-placeholder"></div>
 				{/if}
@@ -78,7 +79,7 @@
 
 			<div class="rating">
 				{#each [1, 2, 3, 4, 5] as n}
-					<span class={n <= Math.round(media.rating) ? 'star filled' : 'star'}></span>
+					<span class={n <= Math.round(media.user.rating) ? 'star filled' : 'star'}></span>
 				{/each}
 			</div>
 

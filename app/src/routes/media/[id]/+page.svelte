@@ -1,26 +1,24 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { fetchWithAuth } from '$lib/fetchWithAuth';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	let title = $state(untrack(() => data.media.title));
+	let title = $state(untrack(() => data.media.user.title ?? ''));
 	let pageUrl = $state(untrack(() => data.media.pageUrl));
-	let imageUrl = $state(untrack(() => data.media.imageUrl));
-	let notes = $state(untrack(() => data.media.notes));
-	let rating = $state(untrack(() => data.media.rating));
-
-	let tagsCopyright = $state(untrack(() => data.media.tags_copyright.join(', ')));
-	let tagsCharacter = $state(untrack(() => data.media.tags_character.join(', ')));
-	let tagsArtist = $state(untrack(() => data.media.tags_artist.join(', ')));
-	let tagsGeneral = $state(untrack(() => data.media.tags_general.join(', ')));
-	let tagsMeta = $state(untrack(() => data.media.tags_meta.join(', ')));
+	let notes = $state(untrack(() => data.media.user.notes));
+	let rating = $state(untrack(() => data.media.user.rating));
+	let tagsUser = $state(untrack(() => data.media.user.tags.join(', ')));
 
 	type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 	let saveStatus: SaveStatus = $state('idle');
 	let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+	type ImportStatus = 'idle' | 'importing' | 'success' | 'error';
+	let importStatus: ImportStatus = $state('idle');
+	let importError: string = $state('');
 
 	function parseTags(raw: string): string[] {
 		return raw
@@ -37,21 +35,36 @@
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-				title,
+				'user.title': title || null,
 				pageUrl,
-				imageUrl,
-				notes,
-				rating,
-				tags_copyright: parseTags(tagsCopyright),
-				tags_character: parseTags(tagsCharacter),
-				tags_artist: parseTags(tagsArtist),
-				tags_general: parseTags(tagsGeneral),
-				tags_meta: parseTags(tagsMeta),
+				'user.notes': notes,
+				'user.rating': rating,
+				'user.tags': parseTags(tagsUser),
 			}),
 		});
 
 		saveStatus = res.ok ? 'saved' : 'error';
 		resetTimer = setTimeout(() => (saveStatus = 'idle'), 2000);
+	}
+
+	async function reimport() {
+		importStatus = 'importing';
+		importError = '';
+
+		const res = await fetchWithAuth(`/api/media/${data.media.id}/import`, { method: 'POST' });
+
+		if (res.ok) {
+			importStatus = 'success';
+			setTimeout(() => {
+				importStatus = 'idle';
+				invalidateAll();
+			}, 1500);
+		} else {
+			const body = await res.json().catch(() => ({}));
+			importError = (body as { error?: string }).error ?? 'Import failed';
+			importStatus = 'error';
+			setTimeout(() => (importStatus = 'idle'), 3000);
+		}
 	}
 
 	async function deleteItem() {
@@ -69,18 +82,30 @@
 		saved: 'Saved',
 		error: 'Error saving',
 	};
+
+	const importStatusLabel: Record<ImportStatus, string> = {
+		idle: 'Reimport',
+		importing: 'Importing…',
+		success: 'Imported',
+		error: 'Failed',
+	};
+
+	function formatDate(ms: number | null): string {
+		if (!ms) return 'Never';
+		return new Date(ms).toLocaleString();
+	}
 </script>
 
 <svelte:head>
-	<title>{title || 'Media Detail'}</title>
+	<title>{title || data.media.external.title || 'Media Detail'}</title>
 </svelte:head>
 
 <div class="detail">
 	<a class="back" href="/media/list">← Back to list</a>
 
 	<div class="preview">
-		{#if imageUrl}
-			<img src={imageUrl} alt={title || 'preview'} />
+		{#if data.media.external.imageUrl}
+			<img src={data.media.external.imageUrl} alt={title || data.media.external.title || 'preview'} />
 		{:else}
 			<div class="img-placeholder"></div>
 		{/if}
@@ -88,13 +113,8 @@
 
 	<div class="fields">
 		<label>
-			<span>Image URL</span>
-			<input type="url" bind:value={imageUrl} placeholder="https://…" />
-		</label>
-
-		<label>
 			<span>Title</span>
-			<input type="text" bind:value={title} placeholder="Title" />
+			<input type="text" bind:value={title} placeholder="Title override (optional)" />
 		</label>
 
 		<label class="url-label">
@@ -125,25 +145,56 @@
 		</div>
 
 		<label>
-			<span>Tags — Copyright</span>
-			<input type="text" bind:value={tagsCopyright} placeholder="marvel, dc" />
+			<span>Tags — My Tags</span>
+			<input type="text" bind:value={tagsUser} placeholder="custom, tags" />
 		</label>
-		<label>
-			<span>Tags — Character</span>
-			<input type="text" bind:value={tagsCharacter} placeholder="spider-man, batman" />
-		</label>
-		<label>
-			<span>Tags — Artist</span>
-			<input type="text" bind:value={tagsArtist} placeholder="artist name" />
-		</label>
-		<label>
-			<span>Tags — General</span>
-			<input type="text" bind:value={tagsGeneral} placeholder="action, superhero" />
-		</label>
-		<label>
-			<span>Tags — Meta</span>
-			<input type="text" bind:value={tagsMeta} placeholder="hd, scan" />
-		</label>
+
+		{#if data.media.external.tags_copyright.length || data.media.external.tags_character.length || data.media.external.tags_artist.length || data.media.external.tags_general.length || data.media.external.tags_meta.length}
+			<div class="scraped-tags">
+				<span class="section-label">Scraped Tags</span>
+				{#if data.media.external.tags_copyright.length}
+					<div class="tag-row"><span>Copyright</span><p>{data.media.external.tags_copyright.join(', ')}</p></div>
+				{/if}
+				{#if data.media.external.tags_character.length}
+					<div class="tag-row"><span>Character</span><p>{data.media.external.tags_character.join(', ')}</p></div>
+				{/if}
+				{#if data.media.external.tags_artist.length}
+					<div class="tag-row"><span>Artist</span><p>{data.media.external.tags_artist.join(', ')}</p></div>
+				{/if}
+				{#if data.media.external.tags_general.length}
+					<div class="tag-row"><span>General</span><p>{data.media.external.tags_general.join(', ')}</p></div>
+				{/if}
+				{#if data.media.external.tags_meta.length}
+					<div class="tag-row"><span>Meta</span><p>{data.media.external.tags_meta.join(', ')}</p></div>
+				{/if}
+			</div>
+		{/if}
+
+		<div class="import-section">
+			<span class="section-label">Import</span>
+			<div class="import-meta">
+				<span class="import-status" class:status-success={data.media.import.status === 'success'} class:status-failed={data.media.import.status === 'failed'}>
+					{data.media.import.status}
+				</span>
+				<span class="import-date">Last run: {formatDate(data.media.import.last_imported_at)}</span>
+			</div>
+			{#if data.media.import.last_error}
+				<p class="import-error">{data.media.import.last_error}</p>
+			{/if}
+			{#if importStatus === 'error'}
+				<p class="import-error">{importError}</p>
+			{/if}
+			<button
+				type="button"
+				class="btn-import"
+				class:success={importStatus === 'success'}
+				class:error={importStatus === 'error'}
+				onclick={reimport}
+				disabled={importStatus === 'importing'}
+			>
+				{importStatusLabel[importStatus]}
+			</button>
+		</div>
 	</div>
 
 	<div class="actions">
@@ -206,7 +257,8 @@
 		gap: 0.25rem;
 	}
 
-	label span {
+	label span,
+	.section-label {
 		font-size: 0.75rem;
 		font-weight: 600;
 		color: var(--heading-color);
@@ -296,6 +348,108 @@
 
 	.star:hover::before {
 		color: #f5a623;
+	}
+
+	.scraped-tags {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 0.75rem;
+		background: var(--secondary-color);
+		border-radius: 6px;
+	}
+
+	.scraped-tags .section-label {
+		margin-bottom: 0.25rem;
+	}
+
+	.tag-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+	}
+
+	.tag-row span {
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--heading-color);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.tag-row p {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--text-color);
+		word-break: break-word;
+	}
+
+	.import-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		padding: 0.75rem;
+		background: var(--secondary-color);
+		border-radius: 6px;
+	}
+
+	.import-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.import-status {
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: #888;
+	}
+
+	.import-status.status-success {
+		color: #2e7d32;
+	}
+
+	.import-status.status-failed {
+		color: var(--accent-color);
+	}
+
+	.import-date {
+		font-size: 0.75rem;
+		color: #888;
+	}
+
+	.import-error {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--accent-color);
+	}
+
+	.btn-import {
+		align-self: flex-start;
+		padding: 0.4rem 1rem;
+		background: transparent;
+		color: var(--heading-color);
+		border: 1px solid var(--primary-color);
+		border-radius: 6px;
+		font-size: 0.85rem;
+		cursor: pointer;
+	}
+
+	.btn-import:disabled {
+		opacity: 0.6;
+		cursor: default;
+	}
+
+	.btn-import.success {
+		color: #2e7d32;
+		border-color: #2e7d32;
+	}
+
+	.btn-import.error {
+		color: var(--accent-color);
+		border-color: var(--accent-color);
 	}
 
 	.actions {

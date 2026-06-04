@@ -1,13 +1,12 @@
 import type { Media } from './types.js';
 
-type TagFields = Pick<Media, 'tags_copyright' | 'tags_character' | 'tags_artist' | 'tags_general' | 'tags_meta'>;
-
-export function buildTags(media: TagFields): string[] {
-  return [
-    ...media.tags_copyright,
-    ...media.tags_character,
-    ...media.tags_artist,
-    ...media.tags_general,
-    ...media.tags_meta,
-  ];
+export function buildTags(external: Media['external'], userTags: string[]): string[] {
+  return [...new Set([
+    ...external.tags_copyright,
+    ...external.tags_character,
+    ...external.tags_artist,
+    ...external.tags_general,
+    ...external.tags_meta,
+    ...userTags,
+  ])];
 }
