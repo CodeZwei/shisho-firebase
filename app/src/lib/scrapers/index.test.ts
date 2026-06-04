@@ -40,7 +40,7 @@ describe('scrape dispatcher', () => {
 
 		expect(vi.mocked(rule34.parse)).toHaveBeenCalledWith(MOCK_HTML);
 		expect(vi.mocked(generic.parse)).not.toHaveBeenCalled();
-		expect(result).toEqual({ external: { title: 'test post' } });
+		expect(result).toEqual({ external: { title: 'test post' }, parser: 'rule34' });
 	});
 
 	it('routes unknown hostnames to the generic parser', async () => {
@@ -51,7 +51,7 @@ describe('scrape dispatcher', () => {
 
 		expect(vi.mocked(generic.parse)).toHaveBeenCalledWith(MOCK_HTML);
 		expect(vi.mocked(rule34.parse)).not.toHaveBeenCalled();
-		expect(result).toEqual({ external: { imageUrl: 'https://example.com/img.jpg' } });
+		expect(result).toEqual({ external: { imageUrl: 'https://example.com/img.jpg' }, parser: 'generic' });
 	});
 
 	// Fetch behavior

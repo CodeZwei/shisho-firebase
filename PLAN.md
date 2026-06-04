@@ -19,9 +19,9 @@ See [wiki/firebase/DataModel.md](wiki/firebase/DataModel.md) for the final data 
 - [x] `app/src/routes/media/_types.ts` — update `mediaConverter` to map to/from the nested structure
 
 ### Phase 4 — API Routes
-- [ ] `app/src/routes/api/media/+server.ts` — POST writes initial document with `import.status: "unimported"`, `import.last_imported_at: null`
-- [ ] `app/src/routes/api/media/[id]/+server.ts` — rewrite PATCH allowed-fields whitelist and use dot-notation for Firestore updates
-- [ ] Add `app/src/routes/api/media/[id]/import/+server.ts` — POST endpoint: reads `pageUrl`, runs scraper, writes `external.*`, `tags_all`, and `import.*`
+- [x] `app/src/routes/api/media/+server.ts` — POST writes initial document with `import.status: "unimported"`, `import.last_imported_at: null`
+- [x] `app/src/routes/api/media/[id]/+server.ts` — rewrite PATCH allowed-fields whitelist and use dot-notation for Firestore updates
+- [x] Add `app/src/routes/api/media/[id]/import/+server.ts` — POST endpoint: reads `pageUrl`, runs scraper, writes `external.*`, `tags_all`, and `import.*`
 
 ### Phase 5 — UI
 - [ ] `app/src/routes/media/[id]/+page.svelte` — update state and form bindings for nested field paths
