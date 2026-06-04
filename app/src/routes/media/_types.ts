@@ -28,7 +28,9 @@ export const mediaConverter: FirestoreDataConverter<Media> = {
       pending_delete: data.pending_delete ?? false,
       tags_all: data.tags_all ?? [],
       external: {
+        id: data.external?.id ?? '',
         imageUrl: data.external?.imageUrl ?? '',
+        thumbnailUrl: data.external?.thumbnailUrl ?? '',
         title: data.external?.title ?? '',
         tags: data.external?.tags ?? [],
       },

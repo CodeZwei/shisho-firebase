@@ -37,7 +37,7 @@ describe('rule34-html parser', () => {
 	});
 
 	it('fails if the provided html is a CAPTCHA challenge', () => {
-		const html = "<title>Rule34 CAPTCHA"
+		const html = "<title>Rule34 CAPTCHA</title>"
 
 		expect(() => parse(html)).toThrow("CAPTCHA detected — page was not returned");
 	});

@@ -44,7 +44,9 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         pending_delete: false,
         tags_all: [],
         external: {
+          id: '',
           imageUrl: '',
+          thumbnailUrl: '',
           title: '',
           tags: [],
         },

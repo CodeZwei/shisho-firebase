@@ -27,7 +27,7 @@ describe('generic parser', () => {
 
 
 	it('fails if the provided html is a CAPTCHA challenge', () => {
-		const html = "<title>Example.com CAPTCHA"
+		const html = "<title>Example.com CAPTCHA</title>"
 
 		expect(() => parse(html)).toThrow("CAPTCHA detected — page was not returned");
 	});

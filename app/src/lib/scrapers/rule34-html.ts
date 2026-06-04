@@ -9,9 +9,17 @@ export const scraper: Scraper = {
 	scrape: async (pageUrl, signal) => {
 		const response = await fetch(pageUrl, { signal });
 		const html = await response.text();
-		return parse(html);
+		const result = parse(html);
+		result.external.id = extractPostId(pageUrl)
+		return result;
 	},
 };
+
+function extractPostId(pageUrl: string): string {
+	const id = new URL(pageUrl).searchParams.get('id');
+	if (!id) throw new Error(`Could not extract post ID from URL: ${pageUrl}`);
+	return id;
+}
 
 // TODO: Remove export function and refactor tests to mock the fetch so they can call with the Scraper interface instead.
 export function parse(html: string): ParserResult {

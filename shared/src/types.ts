@@ -7,7 +7,9 @@ export type Media = {
   tags_all: string[];
 
   external: {
+    id: string;
     imageUrl: string;
+    thumbnailUrl: string;
     title: string;
     tags: string[];
   };

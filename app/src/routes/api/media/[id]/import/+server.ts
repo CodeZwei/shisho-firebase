@@ -18,7 +18,9 @@ export const POST: RequestHandler = async ({ locals, params }) => {
     const { external, parser } = await scrape(media.pageUrl);
 
     const resolvedExternal: Media['external'] = {
+      id: external.id ?? '',
       imageUrl: external.imageUrl ?? '',
+      thumbnailUrl: external.thumbnailUrl ?? '',
       title: external.title ?? '',
       tags: external.tags ?? [],
     };

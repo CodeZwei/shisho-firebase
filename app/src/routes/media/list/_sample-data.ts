@@ -1,7 +1,9 @@
 import type { Media } from '../_types';
 
 const blankExternal: Media['external'] = {
+  id: '',
   imageUrl: '',
+  thumbnailUrl: '',
   title: '',
   tags: [],
 };
