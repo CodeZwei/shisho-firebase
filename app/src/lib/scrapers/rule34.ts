@@ -12,12 +12,14 @@ export const parse: Parser = (html) => {
 	const $ = cheerio.load(html);
 
 	return {
-		title: $('title').text().trim() || undefined,
-		imageUrl: $('meta[property="og:image"]').attr('content'),
-		tags_copyright: extractTags($, 'copyright'),
-		tags_character: extractTags($, 'character'),
-		tags_artist: extractTags($, 'artist'),
-		tags_general: extractTags($, 'general'),
-		tags_meta: extractTags($, 'metadata'),
+		external: {
+			title: $('title').text().trim() || undefined,
+			imageUrl: $('meta[property="og:image"]').attr('content'),
+			tags_copyright: extractTags($, 'copyright'),
+			tags_character: extractTags($, 'character'),
+			tags_artist: extractTags($, 'artist'),
+			tags_general: extractTags($, 'general'),
+			tags_meta: extractTags($, 'metadata'),
+		},
 	};
 };

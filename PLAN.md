@@ -11,9 +11,9 @@ See [wiki/firebase/DataModel.md](wiki/firebase/DataModel.md) for the final data 
 - [x] `shared/src/tags.ts` — update `buildTags()` to read from `external.tags_*` and `user.tags`
 
 ### Phase 2 — Scrapers
-- [ ] `app/src/lib/scrapers/rule34.ts` — return shape changes to `{ external: { imageUrl, tags_* } }`
-- [ ] `app/src/lib/scrapers/generic.ts` — same
-- [ ] Update scraper tests to match new return shape
+- [x] `app/src/lib/scrapers/rule34.ts` — return shape changes to `{ external: { imageUrl, tags_* } }`
+- [x] `app/src/lib/scrapers/generic.ts` — same
+- [x] Update scraper tests to match new return shape
 
 ### Phase 3 — Firestore Layer
 - [ ] `app/src/routes/media/_types.ts` — update `mediaConverter` to map to/from the nested structure

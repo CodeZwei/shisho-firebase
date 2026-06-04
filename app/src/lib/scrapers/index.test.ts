@@ -34,30 +34,30 @@ describe('scrape dispatcher', () => {
 	// Routing
 	it('routes rule34.xxx to the rule34 parser', async () => {
 		stubFetch(MOCK_HTML);
-		vi.mocked(rule34.parse).mockReturnValue({ title: 'test post' });
+		vi.mocked(rule34.parse).mockReturnValue({ external: { title: 'test post' } });
 
 		const result = await scrape(RULE34_URL);
 
 		expect(vi.mocked(rule34.parse)).toHaveBeenCalledWith(MOCK_HTML);
 		expect(vi.mocked(generic.parse)).not.toHaveBeenCalled();
-		expect(result).toEqual({ title: 'test post' });
+		expect(result).toEqual({ external: { title: 'test post' } });
 	});
 
 	it('routes unknown hostnames to the generic parser', async () => {
 		stubFetch(MOCK_HTML);
-		vi.mocked(generic.parse).mockReturnValue({ imageUrl: 'https://example.com/img.jpg' });
+		vi.mocked(generic.parse).mockReturnValue({ external: { imageUrl: 'https://example.com/img.jpg' } });
 
 		const result = await scrape(GENERIC_URL);
 
 		expect(vi.mocked(generic.parse)).toHaveBeenCalledWith(MOCK_HTML);
 		expect(vi.mocked(rule34.parse)).not.toHaveBeenCalled();
-		expect(result).toEqual({ imageUrl: 'https://example.com/img.jpg' });
+		expect(result).toEqual({ external: { imageUrl: 'https://example.com/img.jpg' } });
 	});
 
 	// Fetch behavior
 	it('fetches HTML exactly once per scrape call', async () => {
 		const fetchMock = stubFetch();
-		vi.mocked(generic.parse).mockReturnValue({});
+		vi.mocked(generic.parse).mockReturnValue({ external: {} });
 
 		await scrape(GENERIC_URL);
 
@@ -73,7 +73,7 @@ describe('scrape dispatcher', () => {
 	// Abort behavior
 	it('forwards the caller AbortSignal to fetch', async () => {
 		const fetchMock = stubFetch();
-		vi.mocked(generic.parse).mockReturnValue({});
+		vi.mocked(generic.parse).mockReturnValue({ external: {} });
 
 		await scrape(GENERIC_URL, controller.signal);
 

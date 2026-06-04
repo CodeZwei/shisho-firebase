@@ -22,5 +22,5 @@ export const parse: Parser = (html) => {
 
 	const title = rawTitle?.replace(/\s*[|\-–—]\s*[^|\-–—]+$/, '').trim() || undefined;
 
-	return { imageUrl, title };
+	return { external: { imageUrl, title } };
 };
