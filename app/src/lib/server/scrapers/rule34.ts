@@ -21,6 +21,20 @@ function extractPostId(pageUrl: string): string {
 	return id;
 }
 
+const AUTH_ERROR = 'rule34 API authentication failed — check RULE34_API_KEY and RULE34_USER_ID';
+
+function parseBody(body: unknown, postId: string): Rule34ApiPost {
+	// rule34 returns 200 with an error string instead of a proper 4xx when credentials are invalid
+	if (typeof body === 'string') {
+		if (body.toLowerCase().includes('missing authentication')) throw new Error(AUTH_ERROR);
+		throw new Error(`rule34 API returned unexpected response: ${body}`);
+	}
+	if (!Array.isArray(body) || body.length === 0) {
+		throw new Error(`rule34 API returned no post for ID ${postId}`);
+	}
+	return (body as Rule34ApiPost[])[0];
+}
+
 async function fetchApiPost(
 	postId: string,
 	apiKey: string,
@@ -29,28 +43,9 @@ async function fetchApiPost(
 ): Promise<Rule34ApiPost> {
 	const apiUrl = `https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&id=${postId}&api_key=${apiKey}&user_id=${userId}`;
 	const response = await fetch(apiUrl, { signal });
-
-	if (response.status === 401 || response.status === 403) {
-		throw new Error('rule34 API authentication failed — check RULE34_API_KEY and RULE34_USER_ID');
-	}
-	if (!response.ok) {
-		throw new Error(`rule34 API returned ${response.status} ${response.statusText}`);
-	}
-
-	const body = await response.json();
-	// rule34 returns 200 with an error string instead of a proper 4xx when credentials are invalid
-	if (typeof body === 'string') {
-		if (body.toLowerCase().includes('missing authentication')) {
-			throw new Error('rule34 API authentication failed — check RULE34_API_KEY and RULE34_USER_ID');
-		}
-		throw new Error(`rule34 API returned unexpected response: ${body}`);
-	}
-	const posts = body as Rule34ApiPost[];
-	if (!Array.isArray(posts) || posts.length === 0) {
-		throw new Error(`rule34 API returned no post for ID ${postId}`);
-	}
-
-	return posts[0];
+	if (response.status === 401 || response.status === 403) throw new Error(AUTH_ERROR);
+	if (!response.ok) throw new Error(`rule34 API returned ${response.status} ${response.statusText}`);
+	return parseBody(await response.json(), postId);
 }
 
 export const scraper: Scraper = {
