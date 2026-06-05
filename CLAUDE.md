@@ -101,6 +101,10 @@ When troubleshooting, diagnosing, or answering questions, present a plan and wai
 - TypeScript strict mode. No `any`.
 - No comments unless the reason is non-obvious.
 
+## Dependency Notes
+
+Before upgrading `firebase-admin`, check [wiki/Workarounds.md](wiki/Workarounds.md).
+
 ## Not Built Yet
 
 - CLI (`cli/`)
