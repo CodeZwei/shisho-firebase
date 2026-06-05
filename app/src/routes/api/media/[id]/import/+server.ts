@@ -26,8 +26,9 @@ export const POST: RequestHandler = async ({ locals, params }) => {
     };
 
     await rawRef.update({
-      'external.imageUrl': resolvedExternal.imageUrl,
       'external.title': resolvedExternal.title,
+      'external.imageUrl': resolvedExternal.imageUrl,
+      'external.thumbnailUrl': resolvedExternal.thumbnailUrl,
       'external.tags': resolvedExternal.tags,
       tags_all: buildTags(resolvedExternal, media.user.tags),
       'import.status': 'success',

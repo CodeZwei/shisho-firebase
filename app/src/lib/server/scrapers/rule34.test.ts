@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
-import { scraper } from './rule34.js';
+import { scraper, type Rule34ApiPost } from './rule34.js';
 
 /*
 Fixture captured from the rule34 DAPI endpoint.
@@ -16,11 +16,9 @@ Locate API_KEY and USER_ID from https://rule34.xxx/index.php?page=account&s=opti
 const FIXTURE_POST_ID = '1915346';
 const FIXTURE_URL = `https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&id=${FIXTURE_POST_ID}&api_key=12345&user_id=45678`;
 
-type ApiPost = { id: number; file_url: string; tags: string; image: string };
-
 const fixture = JSON.parse(
 	readFileSync(fileURLToPath(new URL('./fixtures/rule34-api.json', import.meta.url)), 'utf-8')
-) as Array<ApiPost>;
+) as Array<Rule34ApiPost>;
 const post = fixture[0];
 
 /*
@@ -77,6 +75,7 @@ describe('rule34 API scraper', () => {
 		expect.soft(result.external.id).toBe(FIXTURE_POST_ID);
 		expect.soft(result.external.imageUrl).toBe(post.file_url);
 		expect.soft(result.external.title).toBe(`Rule 34 - Post #${post.id}`);
+		expect.soft(result.external.thumbnailUrl).toBe(post.preview_url);
 		expect.soft(result.external.tags).toEqual(post.tags.split(' ').filter(Boolean));
 	});
 
