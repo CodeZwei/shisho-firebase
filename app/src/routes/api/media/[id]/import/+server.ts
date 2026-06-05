@@ -38,11 +38,14 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 
     return json({ success: true });
   } catch (e) {
+    console.error('[api/media/[id]/import] scrape failed:', e);
+
     await rawRef.update({
       'import.status': 'failed',
       'import.last_imported_at': Date.now(),
       'import.last_error': e instanceof Error ? e.message : String(e),
     });
+
     return json(
       { success: false, error: e instanceof Error ? e.message : String(e) },
       { status: 500 }

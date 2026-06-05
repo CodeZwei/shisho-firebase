@@ -13,13 +13,8 @@ To refresh, run from the repo root:
 Locate API_KEY and USER_ID from https://rule34.xxx/index.php?page=account&s=options.
 */
 
-vi.mock('$env/private', () => ({
-	RULE34_API_KEY: 'test-key',
-	RULE34_USER_ID: '99999',
-}));
-
 const FIXTURE_POST_ID = '1915346';
-const FIXTURE_URL = `https://rule34.xxx/index.php?page=post&s=view&id=${FIXTURE_POST_ID}`;
+const FIXTURE_URL = `https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&id=${FIXTURE_POST_ID}&api_key=12345&user_id=45678`;
 
 type ApiPost = { id: number; file_url: string; tags: string; image: string };
 
@@ -27,6 +22,18 @@ const fixture = JSON.parse(
 	readFileSync(fileURLToPath(new URL('./fixtures/rule34-api.json', import.meta.url)), 'utf-8')
 ) as Array<ApiPost>;
 const post = fixture[0];
+
+/*
+Fixture captured from the rule34 DAPI endpoint with invalid credentials.
+To refresh, run from the repo root:
+
+  curl -o app/src/lib/server/scrapers/fixtures/rule34-api-no-auth.json \
+    "https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&id=1915346&api_key=foobar&user_id=bazbin"
+*/
+
+const fixture_no_auth = JSON.parse(
+	readFileSync(fileURLToPath(new URL('./fixtures/rule34-api-no-auth.json', import.meta.url)), 'utf-8')
+) as string;
 
 function stubFetch(status: number, body: unknown) {
 	vi.stubGlobal(
@@ -39,6 +46,11 @@ function stubFetch(status: number, body: unknown) {
 		})
 	);
 }
+
+vi.mock('$env/private', () => ({
+	RULE34_API_KEY: 'test-key',
+	RULE34_USER_ID: '99999',
+}));
 
 describe('rule34 API scraper', () => {
 	afterEach(() => {
@@ -74,12 +86,6 @@ describe('rule34 API scraper', () => {
 		await expect(scraper.scrape(FIXTURE_URL)).rejects.toThrow('Failed to fetch');
 	});
 
-	it('rejects when the API returns 401', async () => {
-		stubFetch(401, null);
-
-		await expect(scraper.scrape(FIXTURE_URL)).rejects.toThrow('authentication failed');
-	});
-
 	it('rejects when the fetch is aborted', async () => {
 		const abortError = Object.assign(new Error('The operation was aborted'), {
 			name: 'AbortError',
@@ -90,5 +96,29 @@ describe('rule34 API scraper', () => {
 		await expect(scraper.scrape(FIXTURE_URL, controller.signal)).rejects.toMatchObject({
 			name: 'AbortError',
 		});
+	});
+
+	it.each([
+		[401, null],
+		[403, null],
+		[200, fixture_no_auth], // (rule34 returns 200 with error string, not 4xx)
+	])('rejects with auth error for status %i', async (status, body) => {
+		stubFetch(status, body);
+		await expect(scraper.scrape(FIXTURE_URL)).rejects.toThrow(
+			'rule34 API authentication failed — check RULE34_API_KEY and RULE34_USER_ID'
+		);
+	});
+
+	it('rejects when successful fetch returns no posts', async () => {
+		stubFetch(200, []);
+
+		await expect(scraper.scrape(FIXTURE_URL)).rejects.toThrow(`rule34 API returned no post for ID ${FIXTURE_POST_ID}`);
+	});
+
+
+	it("rejects when response body is malformed", async () => {
+		stubFetch(200, "Malformed Response");
+
+		await expect(scraper.scrape(FIXTURE_URL)).rejects.toThrow(`rule34 API returned unexpected response: Malformed Response`);
 	});
 });

@@ -37,7 +37,15 @@ async function fetchApiPost(
 		throw new Error(`rule34 API returned ${response.status} ${response.statusText}`);
 	}
 
-	const posts = (await response.json()) as Rule34ApiPost[];
+	const body = await response.json();
+	// rule34 returns 200 with an error string instead of a proper 4xx when credentials are invalid
+	if (typeof body === 'string') {
+		if (body.toLowerCase().includes('missing authentication')) {
+			throw new Error('rule34 API authentication failed — check RULE34_API_KEY and RULE34_USER_ID');
+		}
+		throw new Error(`rule34 API returned unexpected response: ${body}`);
+	}
+	const posts = body as Rule34ApiPost[];
 	if (!Array.isArray(posts) || posts.length === 0) {
 		throw new Error(`rule34 API returned no post for ID ${postId}`);
 	}
