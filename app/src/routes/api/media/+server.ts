@@ -44,13 +44,11 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         pending_delete: false,
         tags_all: [],
         external: {
+          id: '',
           imageUrl: '',
+          thumbnailUrl: '',
           title: '',
-          tags_copyright: [],
-          tags_character: [],
-          tags_artist: [],
-          tags_general: [],
-          tags_meta: [],
+          tags: [],
         },
         user: {
           title: null,

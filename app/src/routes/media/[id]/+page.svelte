@@ -104,8 +104,8 @@
 	<a class="back" href="/media/list">← Back to list</a>
 
 	<div class="preview">
-		{#if data.media.external.imageUrl}
-			<img src={data.media.external.imageUrl} alt={title || data.media.external.title || 'preview'} />
+		{#if data.media.external.thumbnailUrl || data.media.external.imageUrl}
+			<img src={data.media.external.thumbnailUrl || data.media.external.imageUrl} alt={title || data.media.external.title || 'preview'} />
 		{:else}
 			<div class="img-placeholder"></div>
 		{/if}
@@ -149,24 +149,10 @@
 			<input type="text" bind:value={tagsUser} placeholder="custom, tags" />
 		</label>
 
-		{#if data.media.external.tags_copyright.length || data.media.external.tags_character.length || data.media.external.tags_artist.length || data.media.external.tags_general.length || data.media.external.tags_meta.length}
+		{#if data.media.external.tags.length}
 			<div class="scraped-tags">
 				<span class="section-label">Scraped Tags</span>
-				{#if data.media.external.tags_copyright.length}
-					<div class="tag-row"><span>Copyright</span><p>{data.media.external.tags_copyright.join(', ')}</p></div>
-				{/if}
-				{#if data.media.external.tags_character.length}
-					<div class="tag-row"><span>Character</span><p>{data.media.external.tags_character.join(', ')}</p></div>
-				{/if}
-				{#if data.media.external.tags_artist.length}
-					<div class="tag-row"><span>Artist</span><p>{data.media.external.tags_artist.join(', ')}</p></div>
-				{/if}
-				{#if data.media.external.tags_general.length}
-					<div class="tag-row"><span>General</span><p>{data.media.external.tags_general.join(', ')}</p></div>
-				{/if}
-				{#if data.media.external.tags_meta.length}
-					<div class="tag-row"><span>Meta</span><p>{data.media.external.tags_meta.join(', ')}</p></div>
-				{/if}
+				<p class="tag-list">{data.media.external.tags.join(', ')}</p>
 			</div>
 		{/if}
 
@@ -363,21 +349,7 @@
 		margin-bottom: 0.25rem;
 	}
 
-	.tag-row {
-		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
-	}
-
-	.tag-row span {
-		font-size: 0.7rem;
-		font-weight: 600;
-		color: var(--heading-color);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	.tag-row p {
+	.tag-list {
 		margin: 0;
 		font-size: 0.8rem;
 		color: var(--text-color);
