@@ -55,15 +55,17 @@
 
 		if (res.ok) {
 			importStatus = 'success';
-			setTimeout(() => {
-				importStatus = 'idle';
-				invalidateAll();
-			}, 1500);
+			await new Promise<void>((resolve) => setTimeout(resolve, 1500));
+			await invalidateAll();
+			importStatus = 'idle';
 		} else {
 			const body = await res.json().catch(() => ({}));
 			importError = (body as { error?: string }).error ?? 'Import failed';
 			importStatus = 'error';
-			setTimeout(() => (importStatus = 'idle'), 3000);
+			await new Promise<void>((resolve) => setTimeout(resolve, 3000));
+			await invalidateAll();
+			importStatus = 'idle';
+			importError = '';
 		}
 	}
 
@@ -164,11 +166,10 @@
 				</span>
 				<span class="import-date">Last run: {formatDate(data.media.import.last_imported_at)}</span>
 			</div>
-			{#if data.media.import.last_error}
-				<p class="import-error">{data.media.import.last_error}</p>
-			{/if}
 			{#if importStatus === 'error'}
 				<p class="import-error">{importError}</p>
+			{:else if data.media.import.last_error}
+				<p class="import-error">{data.media.import.last_error}</p>
 			{/if}
 			<button
 				type="button"
